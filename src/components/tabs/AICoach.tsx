@@ -1,0 +1,216 @@
+'use client';
+
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Send, CheckCircle2, Loader2 } from 'lucide-react';
+import { startChat, sendMessage } from '@/services/geminiService';
+import { Meal, Workout } from '@/store/useStore';
+
+interface Message {
+  id: string;
+  text: string;
+  sender: 'ai' | 'user';
+  timestamp: Date;
+  action?: {
+    type: 'update_diet' | 'update_workout';
+    payload: any;
+    label: string;
+  };
+}
+
+interface AICoachProps {
+  onPlanUpdate: (type: 'diet' | 'workout', payload: any) => void;
+  context: {
+    profile: any;
+    dietPlan: any;
+    workoutPlan: any;
+  };
+}
+
+const AICoach: React.FC<AICoachProps> = ({ onPlanUpdate, context }) => {
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: '1',
+      text: "Olá! Sou seu Coach de IA. Analisei seu perfil e gerei seu plano inicial. Como posso ajudar você hoje?",
+      sender: 'ai',
+      timestamp: new Date()
+    }
+  ]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const chatInstance = useRef<any>(null);
+
+  useEffect(() => {
+    if (!chatInstance.current) {
+      chatInstance.current = startChat([], context);
+    }
+  }, [context]);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  const parseAction = (text: string) => {
+    const actionMatch = text.match(/\[\[ACTION:(.*?)\]\]/);
+    if (actionMatch && actionMatch[1]) {
+      try {
+        return JSON.parse(actionMatch[1]);
+      } catch (e) {
+        console.error("Erro ao parsear ação da IA", e);
+      }
+    }
+    return null;
+  };
+
+  const cleanText = (text: string) => {
+    return text.replace(/\[\[ACTION:.*?\]\]/g, '').trim();
+  };
+
+  const handleSend = async () => {
+    if (!input.trim() || isLoading) return;
+
+    const userMsg: Message = {
+      id: Date.now().toString(),
+      text: input,
+      sender: 'user',
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, userMsg]);
+    setInput('');
+    setIsLoading(true);
+
+    try {
+      const responseText = await sendMessage(chatInstance.current, input);
+      const action = parseAction(responseText);
+      const displayedText = cleanText(responseText);
+
+      const aiMsg: Message = {
+        id: (Date.now() + 1).toString(),
+        text: displayedText,
+        sender: 'ai',
+        timestamp: new Date(),
+        action: action || undefined
+      };
+
+      setMessages(prev => [...prev, aiMsg]);
+    } catch (error) {
+      console.error("Erro no Gemini:", error);
+      const errorMsg: Message = {
+        id: (Date.now() + 1).toString(),
+        text: "Desculpe, tive um problema de conexão. Poderia repetir?",
+        sender: 'ai',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMsg]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const confirmAction = (action: Message['action']) => {
+    if (!action) return;
+    
+    onPlanUpdate(action.type === 'update_diet' ? 'diet' : 'workout', action.payload);
+    
+    const confirmationMsg: Message = {
+      id: Date.now().toString(),
+      text: `Entendido! Acabei de aplicar essa alteração no seu plano de ${action.type === 'update_diet' ? 'dieta' : 'treino'}.`,
+      sender: 'ai',
+      timestamp: new Date()
+    };
+    
+    setMessages(prev => [...prev, confirmationMsg]);
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 84px)', background: 'var(--apple-bg)' }}>
+      <div style={{ padding: '16px 20px', background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(20px)', borderBottom: '0.5px solid rgba(255,255,255,0.1)', zIndex: 10, display: 'flex', justifyContent: 'center' }}>
+        <img src="/logo.png" alt="FitCoach AI" style={{ height: '28px', objectFit: 'contain' }} />
+      </div>
+
+      <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        {messages.map((msg) => (
+          <div key={msg.id} style={{ alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start', maxWidth: '85%' }}>
+            <div style={{ 
+              padding: '12px 16px', 
+              borderRadius: '20px', 
+              fontSize: '15px',
+              lineHeight: '1.4',
+              backgroundColor: msg.sender === 'user' ? 'var(--apple-blue)' : 'var(--apple-card-bg)',
+              color: 'white',
+              borderBottomRightRadius: msg.sender === 'user' ? '4px' : '20px',
+              borderBottomLeftRadius: msg.sender === 'ai' ? '4px' : '20px',
+              border: msg.sender === 'ai' ? '1px solid rgba(255,255,255,0.05)' : 'none'
+            }}>
+              {msg.text}
+            </div>
+            
+            {msg.action && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="card" 
+                style={{ marginTop: '12px', padding: '16px', background: 'var(--apple-card-bg)', borderColor: 'var(--apple-blue)', borderLeft: '4px solid var(--apple-blue)' }}
+              >
+                <div style={{ fontWeight: 700, fontSize: '11px', marginBottom: '10px', color: 'var(--apple-blue)', letterSpacing: '0.5px' }}>AJUSTE SUGERIDO</div>
+                <button 
+                  onClick={() => confirmAction(msg.action)}
+                  className="btn-primary" 
+                  style={{ width: '100%', padding: '10px', fontSize: '14px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                >
+                  <CheckCircle2 size={16} /> {msg.action.label}
+                </button>
+              </motion.div>
+            )}
+          </div>
+        ))}
+        {isLoading && (
+          <div style={{ alignSelf: 'flex-start', padding: '12px 16px', borderRadius: '20px', backgroundColor: 'var(--apple-card-bg)', color: 'var(--apple-gray)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Loader2 size={16} className="animate-spin" /> Coach está pensando...
+          </div>
+        )}
+      </div>
+
+      <div style={{ padding: '12px 16px', paddingBottom: '24px', background: 'var(--apple-bg)' }}>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', background: 'var(--apple-card-bg)', borderRadius: '24px', padding: '4px 12px', border: '1px solid var(--apple-light-gray)' }}>
+          <input 
+            style={{ flex: 1, background: 'transparent', border: 'none', padding: '10px 4px', fontSize: '16px', outline: 'none', color: 'white' }}
+            placeholder="Mude meu treino, substitua ref..."
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            onKeyPress={e => e.key === 'Enter' && handleSend()}
+            disabled={isLoading}
+          />
+          <button 
+            onClick={handleSend}
+            disabled={isLoading}
+            style={{ 
+              background: isLoading ? 'var(--apple-light-gray)' : 'var(--apple-blue)', 
+              color: 'white', border: 'none', width: '36px', height: '36px', borderRadius: '18px', 
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              opacity: isLoading ? 0.6 : 1
+            }}
+          >
+            <Send size={18} />
+          </button>
+        </div>
+      </div>
+      
+      <style>{`
+        .animate-spin {
+          animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default AICoach;
