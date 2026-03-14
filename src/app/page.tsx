@@ -8,7 +8,7 @@ import {
   TrendingUp
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useStore } from '@/store/useStore';
+import { useStore, Meal, Food, Workout, Exercise } from '@/store/useStore';
 import Onboarding from '@/components/Onboarding';
 import AICoach from '@/components/tabs/AICoach';
 import DietPlan from '@/components/tabs/DietPlan';
@@ -32,22 +32,22 @@ export default function Home() {
     );
   }
 
-  const handlePlanUpdate = (type: 'diet' | 'workout', payload: any) => {
-    if (type === 'diet') {
-      const newDiet = dietPlan.map((meal: any) => {
+  const handlePlanUpdate = (type: 'diet' | 'workout', payload: { mealId?: string, food?: Food, day?: string, exerciseId?: string, newExercise?: any }) => {
+    if (type === 'diet' && payload.mealId && payload.food) {
+      const newDiet = dietPlan.map((meal: Meal) => {
         if (meal.id === payload.mealId) {
-          return { ...meal, foods: [payload.food] }; 
+          return { ...meal, foods: [payload.food!] }; 
         }
         return meal;
       });
       setDietPlan(newDiet);
-    } else if (type === 'workout') {
-      const newWorkouts = workoutPlan.map((w: any) => {
+    } else if (type === 'workout' && payload.day && payload.exerciseId && payload.newExercise) {
+      const newWorkouts = workoutPlan.map((w: Workout) => {
         if (w.day === payload.day) {
           return {
             ...w,
-            exercises: w.exercises.map((ex: any) => 
-              ex.id === payload.exerciseId ? { id: ex.id, ...payload.newExercise } : ex
+            exercises: w.exercises.map((ex: Exercise) => 
+              ex.id === payload.exerciseId ? { ...ex, ...payload.newExercise } : ex
             )
           };
         }

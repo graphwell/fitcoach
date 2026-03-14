@@ -6,7 +6,7 @@ import { Send, CheckCircle2, Loader2 } from 'lucide-react';
 import { startChat, sendMessage } from '@/services/geminiService';
 import { Meal, Workout } from '@/store/useStore';
 
-interface Message {
+export interface Message {
   id: string;
   text: string;
   sender: 'ai' | 'user';
