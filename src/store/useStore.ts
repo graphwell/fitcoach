@@ -52,19 +52,25 @@ export const useStore = () => {
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
-    const p = localStorage.getItem('fitcoach_profile');
-    const d = localStorage.getItem('fitcoach_diet');
-    const w = localStorage.getItem('fitcoach_workouts');
-    const c = localStorage.getItem('fitcoach_cardio');
-    const a = localStorage.getItem('fitcoach_adherence');
+    try {
+      const p = localStorage.getItem('fitcoach_profile');
+      const d = localStorage.getItem('fitcoach_diet');
+      const w = localStorage.getItem('fitcoach_workouts');
+      const c = localStorage.getItem('fitcoach_cardio');
+      const a = localStorage.getItem('fitcoach_adherence');
 
-    if (p) setProfile(JSON.parse(p));
-    if (d) setDietPlan(JSON.parse(d));
-    if (w) setWorkoutPlan(JSON.parse(w));
-    if (c) setCardioData(JSON.parse(c));
-    if (a) setAdherenceData(JSON.parse(a));
-    
-    setIsHydrated(true);
+      if (p) setProfile(JSON.parse(p));
+      if (d) setDietPlan(JSON.parse(d));
+      if (w) setWorkoutPlan(JSON.parse(w));
+      if (c) setCardioData(JSON.parse(c));
+      if (a) setAdherenceData(JSON.parse(a));
+    } catch (e) {
+      console.error("Error loading state from localStorage:", e);
+      // Clear potentially corrupted data
+      localStorage.clear();
+    } finally {
+      setIsHydrated(true);
+    }
   }, []);
 
   useEffect(() => {
