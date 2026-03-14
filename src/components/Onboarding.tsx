@@ -67,6 +67,10 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
         </div>
       )
     },
+    {
+      title: "Conte-nos sobre você",
+      content: (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div style={{ display: 'flex', gap: '16px' }}>
             <div style={{ flex: 1 }}>
               <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', color: 'var(--apple-gray)' }}>Peso (kg)</label>
@@ -151,8 +155,8 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
                 className="card" 
                 onClick={() => setProfile({...profile, goal: goal.id as any})}
                 style={{ 
-                  padding: '16px', cursor: 'pointer', margin: 0,
-                  borderColor: profile.goal === goal.id ? 'var(--apple-blue)' : 'rgba(255,255,255,0.05)'
+                   padding: '16px', cursor: 'pointer', margin: 0,
+                   borderColor: profile.goal === goal.id ? 'var(--apple-blue)' : 'rgba(255,255,255,0.05)'
                 }}
               >
                 <div style={{ fontWeight: 600 }}>{goal.label}</div>
