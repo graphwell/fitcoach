@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronRight, ChevronLeft, Check, Apple, AlertCircle, DollarSign, Clock } from 'lucide-react';
-import { UserProfile, useStore } from '@/store/useStore';
+import { X, ChevronRight, Check } from 'lucide-react';
+import { useStore } from '@/store/useStore';
 import { generatePersonalizedDiet } from '@/services/coachService';
 
 interface EvaluationScreenProps {
@@ -83,7 +83,7 @@ const CoachDietEvaluationScreen: React.FC<EvaluationScreenProps> = ({ onClose })
               <label style={{ fontSize: '12px', color: 'var(--apple-gray)', display: 'block', marginBottom: '8px' }}>DESCREVA ALERGIAS OU INTOLERÂNCIAS</label>
               <textarea 
                 value={formData.allergies} 
-                onChange={e => setFormData({...formData, allergies: e.target.value})} 
+                onChange={v => setFormData({...formData, allergies: v.target.value})} 
                 placeholder="Ex: Lactose, amendoim, glúten..."
                 style={{ width: '100%', height: '100px', background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '12px', color: 'white', outline: 'none' }} 
               />

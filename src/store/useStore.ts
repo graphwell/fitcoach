@@ -205,6 +205,13 @@ export const useStore = () => {
     setDietPlan(prev => [...prev, newMeal]);
   }, []);
 
+  const applyNewDietPlan = useCallback((meals: Meal[]) => {
+    setDietPlan(meals);
+    if (user) {
+      saveUserData(user.uid, { dietPlan: meals });
+    }
+  }, [user]);
+
   // Sync to LocalStorage AND Firestore
   useEffect(() => {
     if (!isHydrated) return;
