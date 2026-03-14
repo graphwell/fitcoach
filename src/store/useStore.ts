@@ -119,7 +119,7 @@ export const useStore = () => {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile, dietPlan, workoutPlan, cardioData, adherenceData, isHydrated, user]);
+  }, [profile, dietPlan, workoutPlan, cardioData, adherenceData, isHydrated, user, generateInitialPlans, setDietPlan, setWorkoutPlan, addFoodToMeal, addMeal]); // Added missing store deps
 
   const signIn = async () => {
     await loginWithGoogle();

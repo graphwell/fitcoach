@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { Users, Shield, UserX, UserCheck, Search, ChevronRight } from 'lucide-react';
+import { Users, Shield, UserX, UserCheck, Search } from 'lucide-react';
 import { getAllUsers, updateUserRole } from '@/services/userService';
 
 const AdminDashboard: React.FC = () => {

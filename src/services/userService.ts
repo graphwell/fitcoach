@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, getDocs, collection, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { UserProfile, Meal, Workout } from "@/store/useStore";
 
