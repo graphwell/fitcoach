@@ -147,7 +147,7 @@ const AICoach: React.FC<AICoachProps> = ({ onPlanUpdate, context }) => {
         boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <img src="/logo.png" alt="FitCoach AI" style={{ height: '32px', objectFit: 'contain' }} />
+          <img src="/logo-new.png" alt="FitCoach AI" style={{ height: '36px', objectFit: 'contain' }} />
           <button 
             onClick={() => setShowEvaluation(true)}
             style={{ 
