@@ -49,8 +49,21 @@ const AuthScreen: React.FC = () => {
         transition={{ duration: 0.8 }}
         style={{ maxWidth: '380px', width: '100%', zIndex: 1 }}
       >
-        <div style={{ marginBottom: '32px' }}>
-          <img src="/logo-new.png" alt="FitCoach AI" style={{ height: '80px', width: 'auto', marginBottom: '16px', filter: 'drop-shadow(0 4px 12px rgba(10, 132, 255, 0.3))' }} />
+        <div style={{ marginBottom: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{
+            width: '120px',
+            height: '120px',
+            borderRadius: '30px',
+            background: 'rgba(255,255,255,0.03)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '24px',
+            border: '1px solid rgba(255,255,255,0.05)',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(10, 132, 255, 0.1)'
+          }}>
+            <img src="/logo-new.png" alt="FitCoach AI" style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
+          </div>
           <h1 style={{ fontSize: '32px', fontWeight: 800, marginBottom: '8px', letterSpacing: '-1px' }}>
             {isLogin ? 'Bem-vindo de volta' : 'Crie sua conta'}
           </h1>
