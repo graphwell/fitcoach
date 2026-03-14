@@ -3,6 +3,8 @@ import {
   GoogleAuthProvider, 
   signOut, 
   onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   User
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
@@ -15,6 +17,26 @@ export const loginWithGoogle = async () => {
     return result.user;
   } catch (error) {
     console.error("Erro ao fazer login com Google:", error);
+    throw error;
+  }
+};
+
+export const signUpWithEmail = async (email: string, pass: string) => {
+  try {
+    const result = await createUserWithEmailAndPassword(auth, email, pass);
+    return result.user;
+  } catch (error) {
+    console.error("Erro ao cadastrar com email:", error);
+    throw error;
+  }
+};
+
+export const signInWithEmail = async (email: string, pass: string) => {
+  try {
+    const result = await signInWithEmailAndPassword(auth, email, pass);
+    return result.user;
+  } catch (error) {
+    console.error("Erro ao entrar com email:", error);
     throw error;
   }
 };

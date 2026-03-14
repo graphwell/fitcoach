@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { User } from 'firebase/auth';
-import { loginWithGoogle, logout as firebaseLogout, subscribeToAuthChanges } from '@/services/authService';
+import { loginWithGoogle, logout as firebaseLogout, subscribeToAuthChanges, signUpWithEmail, signInWithEmail } from '@/services/authService';
 import { saveUserData, loadUserData } from '@/services/userService';
 
 export interface UserProfile {
@@ -59,7 +59,7 @@ export const useStore = () => {
   useEffect(() => {
     const unsubscribe = subscribeToAuthChanges(async (firebaseUser) => {
       setUser(firebaseUser);
-      
+
       if (firebaseUser) {
         // Ao logar, tenta carregar dados do nuvem
         const cloudData = await loadUserData(firebaseUser.uid);
@@ -101,6 +101,14 @@ export const useStore = () => {
     await loginWithGoogle();
   }, []);
 
+  const loginEmail = useCallback(async (email: string, pass: string) => {
+    await signInWithEmail(email, pass);
+  }, []);
+
+  const signupEmail = useCallback(async (email: string, pass: string) => {
+    await signUpWithEmail(email, pass);
+  }, []);
+
   const signOut = useCallback(async () => {
     await firebaseLogout();
     setProfile(null);
@@ -114,7 +122,7 @@ export const useStore = () => {
     const baseCalories = prof.gender === 'male' ? 2500 : 1900;
     const targetCalories = isGaining ? baseCalories + 300 : baseCalories - 300;
     console.log(`Generating plans for ${targetCalories} kcal`);
-    
+
     const initialDiet: Meal[] = [
       {
         id: '1',
@@ -129,7 +137,7 @@ export const useStore = () => {
         name: 'Almoço',
         foods: [
           { name: 'Peito de Frango', amount: '150g', protein: 45, carbs: 0, fat: 3, calories: 220 },
-          { name: 'Arroz Integral', amount: '150g', protein: 4, carbs: 45, fat: 1, calories: 200 }
+          { name: 'Arroz Integral', amount: '150g', protein: 45, carbs: 0, fat: 1, calories: 200 }
         ]
       },
       {
@@ -200,7 +208,7 @@ export const useStore = () => {
   // Sync to LocalStorage AND Firestore
   useEffect(() => {
     if (!isHydrated) return;
-    
+
     // Save to Local
     if (profile) localStorage.setItem('fitcoach_profile', JSON.stringify(profile));
     if (dietPlan.length > 0) localStorage.setItem('fitcoach_diet', JSON.stringify(dietPlan));
@@ -223,6 +231,8 @@ export const useStore = () => {
   return {
     user,
     signIn,
+    loginEmail,
+    signupEmail,
     signOut,
     profile,
     dietPlan,
