@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Meal, Food } from '@/store/useStore';
 import { Plus } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import CatalogModal from '@/components/CatalogModal';
 
 interface DietPlanProps {

@@ -9,21 +9,30 @@ interface WorkoutPlanProps {
 
 const WorkoutPlan: React.FC<WorkoutPlanProps> = ({ workouts }) => {
   return (
-    <div style={{ padding: '20px' }}>
-      <h1 style={{ fontSize: '34px', fontWeight: 700, margin: '20px 0', color: 'white' }}>Treino</h1>
+    <div style={{ padding: '24px', paddingBottom: '120px', paddingTop: 'env(safe-area-inset-top, 24px)' }}>
+      <div style={{ marginBottom: '32px' }}>
+        <h4 style={{ fontSize: '12px', fontWeight: 800, color: 'var(--apple-blue)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>ROTEIRO DE TREINO</h4>
+        <h1 style={{ fontSize: '36px', fontWeight: 800, margin: 0, color: 'white', letterSpacing: '-0.5px' }}>Treino</h1>
+      </div>
       
-      <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', paddingBottom: '20px', marginBottom: '8px' }}>
+      <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '24px', marginBottom: '8px', scrollbarWidth: 'none' }}>
         {['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB', 'DOM'].map((d, i) => (
-          <div key={d} style={{ 
-            minWidth: '54px', height: '74px', borderRadius: '16px', 
-            background: i === 0 ? 'var(--apple-blue)' : 'var(--apple-card-bg)',
-            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-            boxShadow: 'var(--shadow)', color: i === 0 ? 'white' : 'var(--apple-gray)',
-            border: i === 0 ? 'none' : '1px solid var(--apple-light-gray)'
-          }}>
+          <motion.div 
+            key={d} 
+            whileTap={{ scale: 0.95 }}
+            style={{ 
+              minWidth: '60px', height: '84px', borderRadius: '18px', 
+              background: i === 0 ? 'var(--apple-blue)' : 'var(--apple-card-bg)',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+              boxShadow: i === 0 ? '0 8px 20px rgba(10, 132, 255, 0.3)' : 'var(--shadow-sm)', 
+              color: i === 0 ? 'white' : 'var(--apple-secondary-text)',
+              border: '1px solid rgba(255,255,255,0.05)',
+              cursor: 'pointer'
+            }}
+          >
             <span style={{ fontSize: '11px', fontWeight: 700, opacity: 0.8 }}>{d}</span>
-            <span style={{ fontSize: '19px', fontWeight: 800, marginTop: '4px' }}>{i + 14}</span>
-          </div>
+            <span style={{ fontSize: '22px', fontWeight: 800, marginTop: '4px' }}>{i + 14}</span>
+          </motion.div>
         ))}
       </div>
 
@@ -51,9 +60,19 @@ const WorkoutPlan: React.FC<WorkoutPlanProps> = ({ workouts }) => {
             
             <button 
               onClick={() => alert('Treino iniciado! Prepare-se para a primeira série.')}
-              style={{ width: '100%', marginTop: '24px', padding: '16px', border: 'none', background: 'var(--apple-light-gray)', borderRadius: '14px', fontWeight: 700, color: 'white', fontSize: '15px' }}
+              className="btn-primary"
+              style={{ 
+                width: '100%', 
+                marginTop: '32px', 
+                padding: '18px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                gap: '10px',
+                boxShadow: '0 8px 24px rgba(10, 132, 255, 0.3)'
+              }}
             >
-              Iniciar Treino
+              <Play size={20} fill="white" /> Iniciar Treino
             </button>
           </div>
         ))}
