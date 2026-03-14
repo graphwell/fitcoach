@@ -175,6 +175,17 @@ export const useStore = () => {
   };
 
   return {
+    profile,
+    dietPlan,
+    workoutPlan,
+    cardioData,
+    adherenceData,
+    generateInitialPlans,
+    setDietPlan,
+    setWorkoutPlan,
+    setCardioData,
+    setAdherenceData,
+    addFoodToMeal,
     addMeal,
     isHydrated
   };
