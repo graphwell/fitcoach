@@ -38,3 +38,26 @@ export const loadUserData = async (uid: string): Promise<UserData | null> => {
     throw error;
   }
 };
+
+export const getAllUsers = async () => {
+  try {
+    const querySnapshot = await getDocs(collection(db, 'users'));
+    return querySnapshot.docs.map(doc => ({
+      uid: doc.id,
+      ...doc.data()
+    }));
+  } catch (e) {
+    console.error("Error fetching all users:", e);
+    return [];
+  }
+};
+
+export const updateUserRole = async (uid: string, role: 'admin' | 'user') => {
+  try {
+    const userRef = doc(db, 'users', uid);
+    await updateDoc(userRef, { 'profile.role': role });
+  } catch (e) {
+    console.error("Error updating user role:", e);
+  }
+};
+```

@@ -10,6 +10,8 @@ export interface UserProfile {
   gender: 'male' | 'female';
   experience: 'beginner' | 'intermediate' | 'advanced';
   goal: 'lose_fat' | 'gain_muscle' | 'recomposition';
+  role?: 'admin' | 'user';
+  status?: 'active' | 'disabled';
 }
 
 export interface Food {

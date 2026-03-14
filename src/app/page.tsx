@@ -92,6 +92,7 @@ export default function Home() {
             )}
             {activeTab === 'workout' && <WorkoutPlan workouts={workoutPlan} />}
             {activeTab === 'analytics' && <Analytics cardioData={cardioData} adherenceData={adherenceData} />}
+            {activeTab === 'admin' && profile?.role === 'admin' && <AdminDashboard />}
           </motion.div>
         </AnimatePresence>
       </div>
@@ -102,6 +103,7 @@ export default function Home() {
           { id: 'diet', label: 'Dieta', icon: <Utensils size={24} /> },
           { id: 'workout', label: 'Treino', icon: <Dumbbell size={24} /> },
           { id: 'analytics', label: 'Progresso', icon: <TrendingUp size={24} /> },
+          ...(profile?.role === 'admin' ? [{ id: 'admin', label: 'Admin', icon: <ShieldAlert size={24} /> }] : []),
         ].map((tab) => (
           <div 
             key={tab.id} 
