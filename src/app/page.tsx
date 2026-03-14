@@ -1,30 +1,32 @@
 'use client';
 
 import React, { useState } from 'react';
-import { 
+import {
   MessageCircle,
   Utensils,
   Dumbbell,
   TrendingUp,
-  LucideProps
+  LucideProps,
+  ShieldAlert
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore, Meal, Food, Workout, Exercise } from '@/store/useStore';
 import Onboarding from '@/components/Onboarding';
 import AuthScreen from '@/components/AuthScreen';
+import AdminDashboard from '@/components/AdminDashboard';
 import AICoach from '@/components/tabs/AICoach';
 import DietPlan from '@/components/tabs/DietPlan';
 import WorkoutPlan from '@/components/tabs/WorkoutPlan';
 import Analytics from '@/components/tabs/Analytics';
 
 export default function Home() {
-  const { 
+  const {
     user, signOut,
     profile, dietPlan, workoutPlan, cardioData, adherenceData,
     generateInitialPlans, setDietPlan, setWorkoutPlan, addFoodToMeal, addMeal,
     isHydrated
   } = useStore();
-  
+
   const [activeTab, setActiveTab] = useState('coach');
 
   if (!isHydrated) {
@@ -39,7 +41,7 @@ export default function Home() {
     if (type === 'diet' && payload.mealId && payload.food) {
       const newDiet = dietPlan.map((meal: Meal) => {
         if (meal.id === payload.mealId) {
-          return { ...meal, foods: [payload.food!] }; 
+          return { ...meal, foods: [payload.food!] };
         }
         return meal;
       });
@@ -49,7 +51,7 @@ export default function Home() {
         if (w.day === payload.day) {
           return {
             ...w,
-            exercises: w.exercises.map((ex: Exercise) => 
+            exercises: w.exercises.map((ex: Exercise) =>
               ex.id === payload.exerciseId ? { ...ex, ...payload.newExercise } : ex
             )
           };
@@ -60,7 +62,11 @@ export default function Home() {
     }
   };
 
-  if (!profile && !user) {
+  if (!user) {
+    return <AuthScreen />;
+  }
+
+  if (!profile) {
     return <Onboarding onComplete={generateInitialPlans} />;
   }
 
@@ -77,15 +83,15 @@ export default function Home() {
             style={{ height: '100%' }}
           >
             {activeTab === 'coach' && (
-              <AICoach 
-                onPlanUpdate={handlePlanUpdate} 
-                context={{ profile, dietPlan, workoutPlan }} 
+              <AICoach
+                onPlanUpdate={handlePlanUpdate}
+                context={{ profile, dietPlan, workoutPlan }}
               />
             )}
             {activeTab === 'diet' && (
-              <DietPlan 
-                meals={dietPlan} 
-                onAddFood={addFoodToMeal} 
+              <DietPlan
+                meals={dietPlan}
+                onAddFood={addFoodToMeal}
                 onAddMeal={addMeal}
                 onReset={() => profile && generateInitialPlans(profile)}
               />
@@ -105,14 +111,14 @@ export default function Home() {
           { id: 'analytics', label: 'Progresso', icon: <TrendingUp size={24} /> },
           ...(profile?.role === 'admin' ? [{ id: 'admin', label: 'Admin', icon: <ShieldAlert size={24} /> }] : []),
         ].map((tab) => (
-          <div 
-            key={tab.id} 
+          <div
+            key={tab.id}
             className={`tab-item ${activeTab === tab.id ? 'active' : ''}`}
             onClick={() => setActiveTab(tab.id)}
             style={{ position: 'relative' }}
           >
             {activeTab === tab.id && (
-              <motion.div 
+              <motion.div
                 layoutId="activeTabIndicator"
                 style={{
                   position: 'absolute',
@@ -125,18 +131,18 @@ export default function Home() {
                 }}
               />
             )}
-            <div style={{ 
-              marginBottom: '4px', 
+            <div style={{
+              marginBottom: '4px',
               opacity: activeTab === tab.id ? 1 : 0.5,
               transform: activeTab === tab.id ? 'scale(1.1)' : 'scale(1)',
               transition: 'all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
             }}>
-              {React.cloneElement(tab.icon as React.ReactElement<LucideProps>, { 
-                strokeWidth: activeTab === tab.id ? 2.5 : 2 
+              {React.cloneElement(tab.icon as React.ReactElement<LucideProps>, {
+                strokeWidth: activeTab === tab.id ? 2.5 : 2
               })}
             </div>
-            <span style={{ 
-              fontSize: '10px', 
+            <span style={{
+              fontSize: '10px',
               fontWeight: activeTab === tab.id ? 700 : 500,
               opacity: activeTab === tab.id ? 1 : 0.7
             }}>
@@ -145,7 +151,7 @@ export default function Home() {
           </div>
         ))}
         {user && (
-          <div 
+          <div
             className="tab-item"
             onClick={signOut}
             style={{ color: 'var(--apple-red)', opacity: 0.8 }}
