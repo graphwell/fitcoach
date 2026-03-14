@@ -6,6 +6,8 @@ import {
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer, 
   LineChart, Line, CartesianGrid, Tooltip, ReferenceLine 
 } from 'recharts';
+import { motion } from 'framer-motion';
+import { TrendingUp } from 'lucide-react';
 
 interface AnalyticsProps {
   cardioData: number[];
@@ -49,8 +51,11 @@ const Analytics: React.FC<AnalyticsProps> = ({ cardioData, adherenceData }) => {
   }
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1 style={{ fontSize: '34px', fontWeight: 700, margin: '20px 0', color: 'white' }}>Progresso</h1>
+    <div style={{ padding: '24px', paddingBottom: '120px', paddingTop: 'env(safe-area-inset-top, 24px)' }}>
+      <div style={{ marginBottom: '32px' }}>
+        <h4 style={{ fontSize: '12px', fontWeight: 800, color: 'var(--apple-blue)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>MÉTRICAS DE DESEMPENHO</h4>
+        <h1 style={{ fontSize: '36px', fontWeight: 800, margin: 0, color: 'white', letterSpacing: '-0.5px' }}>Progresso</h1>
+      </div>
       
       <div className="card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '24px' }}>
@@ -99,12 +104,24 @@ const Analytics: React.FC<AnalyticsProps> = ({ cardioData, adherenceData }) => {
         </div>
       </div>
 
-      <div className="card" style={{ marginTop: '20px', borderLeft: '4px solid var(--apple-blue)' }}>
-        <h3 style={{ margin: '0 0 8px 0', fontSize: '16px', fontWeight: 700 }}>Insights da IA</h3>
-        <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5, color: 'var(--apple-secondary-text)', fontWeight: 400 }}>
-          Sua aderência está em 94% esta semana. Ótima consistência! Considere aumentar o cardio em 15 minutos para acelerar sua meta de queima de gordura.
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="card" 
+        style={{ 
+          marginTop: '24px', 
+          borderLeft: '4px solid var(--apple-blue)',
+          background: 'linear-gradient(90deg, rgba(10, 132, 255, 0.1) 0%, rgba(28, 28, 30, 1) 100%)'
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+          <TrendingUp size={18} color="var(--apple-blue)" />
+          <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: 'white' }}>Insights da IA</h3>
+        </div>
+        <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.6, color: 'var(--apple-secondary-text)', fontWeight: 400 }}>
+          Sua aderência está em 94% esta semana. <span style={{ color: 'white', fontWeight: 600 }}>Ótima consistência!</span> Considere aumentar o cardio em 15 minutos para acelerar sua meta de queima de gordura.
         </p>
-      </div>
+      </motion.div>
     </div>
   );
 };
