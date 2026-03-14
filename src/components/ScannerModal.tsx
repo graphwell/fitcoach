@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+// Remove direct import to prevent build worker issues
+// import { Html5QrcodeScanner } from 'html5-qrcode';
 import { X, Loader2 } from 'lucide-react';
 import { fetchProductByBarcode } from '@/services/nutritionService';
 import { Food } from '@/store/useStore';
@@ -18,40 +19,52 @@ const ScannerModal: React.FC<ScannerModalProps> = ({ isOpen, onClose, onProductD
   const [loading, setLoading] = useState(false);
   const [product, setProduct] = useState<Food | null>(null);
   const [error, setError] = useState<string | null>(null);
-
   useEffect(() => {
     if (!isOpen || !scanning) return;
 
-    const scanner = new Html5QrcodeScanner(
-      "reader",
-      { fps: 10, qrbox: { width: 250, height: 150 } },
-      /* verbose= */ false
-    );
+    let scanner: any = null;
 
-    const onScanSuccess = async (decodedText: string) => {
-      console.log(`Scan result: ${decodedText}`);
-      scanner.clear();
-      setScanning(false);
-      setLoading(true);
-      setError(null);
+    const setupScanner = async () => {
+      try {
+        const { Html5QrcodeScanner } = await import('html5-qrcode');
+        scanner = new Html5QrcodeScanner(
+          "reader",
+          { fps: 10, qrbox: { width: 250, height: 150 } },
+          /* verbose= */ false
+        );
 
-      const result = await fetchProductByBarcode(decodedText);
-      setLoading(false);
-      if (result) {
-        setProduct(result);
-      } else {
-        setError("Produto não encontrado na base de dados.");
+        const onScanSuccess = async (decodedText: string) => {
+          console.log(`Scan result: ${decodedText}`);
+          if (scanner) scanner.clear();
+          setScanning(false);
+          setLoading(true);
+          setError(null);
+
+          const result = await fetchProductByBarcode(decodedText);
+          setLoading(false);
+          if (result) {
+            setProduct(result);
+          } else {
+            setError("Produto não encontrado na base de dados.");
+          }
+        };
+
+        const onScanFailure = (error: any) => {
+          // Quietly continue
+        };
+
+        scanner.render(onScanSuccess, onScanFailure);
+      } catch (err) {
+        console.error("Failed to load or start scanner", err);
       }
     };
 
-    const onScanFailure = (error: any) => {
-      // Quietly continue
-    };
-
-    scanner.render(onScanSuccess, onScanFailure);
+    setupScanner();
 
     return () => {
-      scanner.clear().catch(err => console.error("Failed to clear scanner", err));
+      if (scanner) {
+        scanner.clear().catch((err: any) => console.error("Failed to clear scanner", err));
+      }
     };
   }, [isOpen, scanning]);
 

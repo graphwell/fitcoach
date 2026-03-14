@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { Loader2 } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer, 
   LineChart, Line, CartesianGrid, Tooltip, ReferenceLine 
@@ -12,6 +13,12 @@ interface AnalyticsProps {
 }
 
 const Analytics: React.FC<AnalyticsProps> = ({ cardioData, adherenceData }) => {
+  const [isClient, setIsClient] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const barData = [
     { day: 'SEG', mins: cardioData[0] },
     { day: 'TER', mins: cardioData[1] },
@@ -29,6 +36,17 @@ const Analytics: React.FC<AnalyticsProps> = ({ cardioData, adherenceData }) => {
 
   const totalCardio = cardioData.reduce((a, b) => a + b, 0);
   const targetCardio = 150;
+
+  if (!isClient) {
+    return (
+      <div style={{ padding: '20px', color: 'white' }}>
+        <h1 style={{ fontSize: '34px', fontWeight: 700, margin: '20px 0' }}>Progresso</h1>
+        <div className="card" style={{ height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Loader2 className="animate-spin" /> Carregando gráficos...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ padding: '20px' }}>
