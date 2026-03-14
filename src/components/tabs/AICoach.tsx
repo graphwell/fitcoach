@@ -127,24 +127,40 @@ const AICoach: React.FC<AICoachProps> = ({ onPlanUpdate, context }) => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 84px)', background: 'var(--apple-bg)' }}>
-      <div style={{ padding: '16px 20px', background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(20px)', borderBottom: '0.5px solid rgba(255,255,255,0.1)', zIndex: 10, display: 'flex', justifyContent: 'center' }}>
-        <img src="/logo.png" alt="FitCoach AI" style={{ height: '28px', objectFit: 'contain' }} />
+    <div style={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      height: 'calc(100dvh - 84px)', 
+      background: 'var(--apple-bg)',
+      paddingTop: 'env(safe-area-inset-top, 0px)'
+    }}>
+      <div className="glass" style={{ 
+        padding: '12px 20px', 
+        zIndex: 10, 
+        display: 'flex', 
+        justifyContent: 'center',
+        borderTop: 'none',
+        position: 'sticky',
+        top: 0
+      }}>
+        <img src="/logo.png" alt="FitCoach AI" style={{ height: '32px', objectFit: 'contain' }} />
       </div>
 
       <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
         {messages.map((msg) => (
           <div key={msg.id} style={{ alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start', maxWidth: '85%' }}>
             <div style={{ 
-              padding: '12px 16px', 
-              borderRadius: '20px', 
+              padding: '14px 18px', 
+              borderRadius: '22px', 
               fontSize: '15px',
-              lineHeight: '1.4',
+              lineHeight: '1.5',
               backgroundColor: msg.sender === 'user' ? 'var(--apple-blue)' : 'var(--apple-card-bg)',
               color: 'white',
-              borderBottomRightRadius: msg.sender === 'user' ? '4px' : '20px',
-              borderBottomLeftRadius: msg.sender === 'ai' ? '4px' : '20px',
-              border: msg.sender === 'ai' ? '1px solid rgba(255,255,255,0.05)' : 'none'
+              borderBottomRightRadius: msg.sender === 'user' ? '4px' : '22px',
+              borderBottomLeftRadius: msg.sender === 'ai' ? '4px' : '22px',
+              border: msg.sender === 'ai' ? '1px solid rgba(255,255,255,0.06)' : 'none',
+              boxShadow: msg.sender === 'user' ? '0 4px 12px rgba(10, 132, 255, 0.25)' : 'var(--shadow-sm)',
+              whiteSpace: 'pre-wrap'
             }}>
               {msg.text}
             </div>
@@ -169,16 +185,48 @@ const AICoach: React.FC<AICoachProps> = ({ onPlanUpdate, context }) => {
           </div>
         ))}
         {isLoading && (
-          <div style={{ alignSelf: 'flex-start', padding: '12px 16px', borderRadius: '20px', backgroundColor: 'var(--apple-card-bg)', color: 'var(--apple-gray)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ 
+            alignSelf: 'flex-start', 
+            padding: '12px 18px', 
+            borderRadius: '22px', 
+            backgroundColor: 'var(--apple-card-bg)', 
+            color: 'var(--apple-secondary-text)', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '8px',
+            border: '1px solid rgba(255,255,255,0.06)',
+            fontSize: '14px'
+          }}>
             <Loader2 size={16} className="animate-spin" /> Coach está pensando...
           </div>
         )}
       </div>
 
-      <div style={{ padding: '12px 16px', paddingBottom: '24px', background: 'var(--apple-bg)' }}>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', background: 'var(--apple-card-bg)', borderRadius: '24px', padding: '4px 12px', border: '1px solid var(--apple-light-gray)' }}>
+      <div style={{ 
+        padding: '12px 16px', 
+        paddingBottom: 'calc(12px + env(safe-area-inset-bottom, 0px))', 
+        background: 'var(--apple-bg)',
+        borderTop: '0.5px solid rgba(255,255,255,0.05)'
+      }}>
+        <div className="glass" style={{ 
+          display: 'flex', 
+          gap: '8px', 
+          alignItems: 'center', 
+          borderRadius: '28px', 
+          padding: '6px 14px', 
+          border: '1px solid rgba(255,255,255,0.1)',
+          background: 'rgba(44, 44, 46, 0.4)'
+        }}>
           <input 
-            style={{ flex: 1, background: 'transparent', border: 'none', padding: '10px 4px', fontSize: '16px', outline: 'none', color: 'white' }}
+            style={{ 
+              flex: 1, 
+              background: 'transparent', 
+              border: 'none', 
+              padding: '12px 4px', 
+              fontSize: '16px', 
+              outline: 'none', 
+              color: 'white' 
+            }}
             placeholder="Mude meu treino, substitua ref..."
             value={input}
             onChange={e => setInput(e.target.value)}
@@ -187,15 +235,17 @@ const AICoach: React.FC<AICoachProps> = ({ onPlanUpdate, context }) => {
           />
           <button 
             onClick={handleSend}
-            disabled={isLoading}
+            disabled={isLoading || !input.trim()}
             style={{ 
-              background: isLoading ? 'var(--apple-light-gray)' : 'var(--apple-blue)', 
-              color: 'white', border: 'none', width: '36px', height: '36px', borderRadius: '18px', 
+              background: isLoading || !input.trim() ? 'var(--apple-light-gray)' : 'var(--apple-blue)', 
+              color: 'white', border: 'none', width: '40px', height: '40px', borderRadius: '20px', 
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              opacity: isLoading ? 0.6 : 1
+              opacity: isLoading || !input.trim() ? 0.4 : 1,
+              transition: 'all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+              boxShadow: !input.trim() ? 'none' : '0 4px 12px rgba(10, 132, 255, 0.3)'
             }}
           >
-            <Send size={18} />
+            <Send size={20} />
           </button>
         </div>
       </div>

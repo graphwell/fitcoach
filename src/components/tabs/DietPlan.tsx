@@ -54,46 +54,65 @@ const DietPlan: React.FC<DietPlanProps> = ({ meals, onAddFood, onAddMeal, onRese
   };
 
   return (
-    <div style={{ padding: '20px', paddingBottom: '100px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '20px 0' }}>
-        <h1 style={{ fontSize: '34px', fontWeight: 700, margin: 0, color: 'white' }}>Dieta</h1>
+    <div style={{ padding: '24px', paddingBottom: '120px', paddingTop: 'env(safe-area-inset-top, 24px)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '32px' }}>
+        <div>
+          <h4 style={{ fontSize: '12px', fontWeight: 800, color: 'var(--apple-blue)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>PLANO NUTRICIONAL</h4>
+          <h1 style={{ fontSize: '36px', fontWeight: 800, margin: 0, color: 'white', letterSpacing: '-0.5px' }}>Dieta</h1>
+        </div>
         <button 
           onClick={() => {
             if (window.confirm('Deseja redefinir sua dieta para os padrões em português? Isso apagará as alterações atuais.')) {
               onReset();
             }
           }}
-          style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: 'var(--apple-gray)', padding: '6px 12px', borderRadius: '10px', fontSize: '12px' }}
+          style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: 'var(--apple-tertiary-text)', padding: '8px 14px', borderRadius: '12px', fontSize: '11px', fontWeight: 600 }}
         >
-          Recarregar Padrão
+          Resetar
         </button>
       </div>
       
       <div className="card" style={{ padding: '24px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
           <div>
-            <div style={{ fontSize: '14px', color: 'var(--apple-gray)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Calorias Diárias</div>
-            <div style={{ fontSize: '32px', fontWeight: 800, marginTop: '4px' }}>{totalCalories} <span style={{ fontSize: '16px', color: 'var(--apple-gray)', fontWeight: 400 }}>/ {targetCalories} kcal</span></div>
+            <div style={{ fontSize: '14px', color: 'var(--apple-secondary-text)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '8px' }}>Consumo Diário</div>
+            <div style={{ fontSize: '38px', fontWeight: 800 }}>
+              {totalCalories} 
+              <span style={{ fontSize: '16px', color: 'var(--apple-tertiary-text)', fontWeight: 500, marginLeft: '8px' }}>/ {targetCalories} kcal</span>
+            </div>
           </div>
-          <div style={{ position: 'relative', width: '64px', height: '64px' }}>
-            <svg viewBox="0 0 36 36" style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }}>
-              <circle cx="18" cy="18" r="16" fill="none" stroke="var(--apple-light-gray)" strokeWidth="3.5"></circle>
-              <circle cx="18" cy="18" r="16" fill="none" stroke="var(--apple-blue)" strokeWidth="3.5" strokeDasharray={`${progress}, 100`} strokeLinecap="round"></circle>
+          <div style={{ position: 'relative', width: '72px', height: '72px' }}>
+            <svg viewBox="0 0 36 36" style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)', filter: 'drop-shadow(0 0 10px rgba(10, 132, 255, 0.2))' }}>
+              <circle cx="18" cy="18" r="16" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="3.5"></circle>
+              <motion.circle 
+                initial={{ strokeDasharray: "0, 100" }}
+                animate={{ strokeDasharray: `${progress}, 100` }}
+                transition={{ duration: 1, ease: "easeOut" }}
+                cx="18" cy="18" r="16" fill="none" stroke="var(--apple-blue)" strokeWidth="3.5" strokeLinecap="round"
+              ></motion.circle>
             </svg>
-            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '13px', fontWeight: 800 }}>{Math.round(progress)}%</div>
+            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '14px', fontWeight: 800 }}>{Math.round(progress)}%</div>
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '16px' }}>
+        <div style={{ display: 'flex', gap: '20px' }}>
           {[
-            { label: 'Prot', val: macros.p, color: 'var(--apple-red)', target: 160 },
-            { label: 'Carbs', val: macros.c, color: 'var(--apple-green)', target: 200 },
-            { label: 'Gord', val: macros.f, color: 'var(--apple-orange)', target: 70 }
+            { label: 'Prot', val: macros.p, color: '#FF453A', target: 160 },
+            { label: 'Carbs', val: macros.c, color: '#32D74B', target: 200 },
+            { label: 'Gord', val: macros.f, color: '#FF9F0A', target: 70 }
           ].map(m => (
             <div key={m.label} style={{ flex: 1 }}>
-              <div style={{ fontSize: '11px', fontWeight: 700, marginBottom: '6px', color: 'var(--apple-gray)' }}>{m.label.toUpperCase()} <span style={{ color: 'white' }}>{m.val}g</span></div>
-              <div style={{ height: '5px', background: 'var(--apple-light-gray)', borderRadius: '2.5px', overflow: 'hidden' }}>
-                <div style={{ height: '100%', width: `${Math.min((m.val / m.target) * 100, 100)}%`, background: m.color, boxShadow: `0 0 8px ${m.color}66` }}></div>
+              <div style={{ fontSize: '12px', fontWeight: 700, marginBottom: '8px', color: 'var(--apple-secondary-text)', display: 'flex', justifyContent: 'space-between' }}>
+                <span>{m.label}</span>
+                <span style={{ color: 'white' }}>{m.val}g</span>
+              </div>
+              <div style={{ height: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '3px', overflow: 'hidden' }}>
+                <motion.div 
+                  initial={{ width: 0 }}
+                  animate={{ width: `${Math.min((m.val / m.target) * 100, 100)}%` }}
+                  transition={{ duration: 1, delay: 0.2 }}
+                  style={{ height: '100%', background: m.color, boxShadow: `0 0 12px ${m.color}44` }}
+                ></motion.div>
               </div>
             </div>
           ))}
