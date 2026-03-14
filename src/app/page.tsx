@@ -1,3 +1,4 @@
+```javascript
 'use client';
 
 import React, { useState } from 'react';
@@ -5,8 +6,7 @@ import {
   MessageCircle,
   Utensils,
   Dumbbell,
-  TrendingUp,
-  LucideProps
+  TrendingUp
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore, Meal, Food, Workout, Exercise } from '@/store/useStore';
@@ -18,7 +18,7 @@ import Analytics from '@/components/tabs/Analytics';
 
 export default function Home() {
   const { 
-    user, signIn, signOut,
+    user, signOut,
     profile, dietPlan, workoutPlan, cardioData, adherenceData,
     generateInitialPlans, setDietPlan, setWorkoutPlan, addFoodToMeal, addMeal,
     isHydrated

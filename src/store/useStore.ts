@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { User } from 'firebase/auth';
 import { loginWithGoogle, logout as firebaseLogout, subscribeToAuthChanges } from '@/services/authService';
 import { saveUserData, loadUserData } from '@/services/userService';
@@ -134,6 +134,7 @@ export const useStore = () => {
     const isGaining = prof.goal === 'gain_muscle';
     const baseCalories = prof.gender === 'male' ? 2500 : 1900;
     const targetCalories = isGaining ? baseCalories + 300 : baseCalories - 300;
+    console.log(`Generating plans for ${targetCalories} kcal`);
     
     const initialDiet: Meal[] = [
       {
