@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Meal, Food } from '@/store/useStore';
-import { Plus } from 'lucide-react';
+import { Plus, Coffee, Sun, Sunset, Moon, RotateCcw } from 'lucide-react';
 import { motion } from 'framer-motion';
 import CatalogModal from '@/components/CatalogModal';
 
@@ -56,10 +56,10 @@ const DietPlan: React.FC<DietPlanProps> = ({ meals, onAddFood, onAddMeal, onRese
 
   return (
     <div style={{ padding: '24px', paddingBottom: '120px', paddingTop: 'env(safe-area-inset-top, 24px)' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '32px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
         <div>
-          <h4 style={{ fontSize: '12px', fontWeight: 800, color: 'var(--apple-blue)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>PLANO NUTRICIONAL</h4>
-          <h1 style={{ fontSize: '36px', fontWeight: 800, margin: 0, color: 'white', letterSpacing: '-0.5px' }}>Dieta</h1>
+          <h4 style={{ fontSize: '11px', fontWeight: 900, color: 'var(--apple-blue)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '6px', opacity: 0.8 }}>PLANEJAMENTO DIÁRIO</h4>
+          <h1 style={{ fontSize: '42px', fontWeight: 900, margin: 0, color: 'white', letterSpacing: '-1.5px', lineHeight: 1 }}>Nutrição</h1>
         </div>
         <button 
           onClick={() => {
@@ -67,56 +67,74 @@ const DietPlan: React.FC<DietPlanProps> = ({ meals, onAddFood, onAddMeal, onRese
               onReset();
             }
           }}
-          style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: 'var(--apple-tertiary-text)', padding: '8px 14px', borderRadius: '12px', fontSize: '11px', fontWeight: 600 }}
+          style={{ 
+            background: 'rgba(255,255,255,0.08)', 
+            border: 'none', 
+            color: 'var(--apple-secondary-text)', 
+            padding: '10px 16px', 
+            borderRadius: '14px', 
+            fontSize: '12px', 
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            transition: 'all 0.2s'
+          }}
         >
+          <RotateCcw size={14} />
           Resetar
         </button>
       </div>
       
-      <div className="card" style={{ padding: '24px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
-          <div>
-            <div style={{ fontSize: '14px', color: 'var(--apple-secondary-text)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '8px' }}>Consumo Diário</div>
-            <div style={{ fontSize: '38px', fontWeight: 800 }}>
-              {totalCalories} 
-              <span style={{ fontSize: '16px', color: 'var(--apple-tertiary-text)', fontWeight: 500, marginLeft: '8px' }}>/ {targetCalories} kcal</span>
+      <div className="card" style={{ padding: '24px', position: 'relative', overflow: 'hidden' }}>
+        {/* Subtle background glow */}
+        <div style={{ position: 'absolute', top: '-50px', right: '-50px', width: '200px', height: '200px', background: 'var(--apple-blue)', filter: 'blur(100px)', opacity: 0.1, zIndex: 0 }}></div>
+        
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '28px' }}>
+            <div>
+              <div style={{ fontSize: '13px', color: 'var(--apple-secondary-text)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>Meta Calórica</div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                <span style={{ fontSize: '42px', fontWeight: 900, color: 'white', letterSpacing: '-1px' }}>{totalCalories}</span>
+                <span style={{ fontSize: '18px', color: 'var(--apple-tertiary-text)', fontWeight: 600 }}>/ {targetCalories} kcal</span>
+              </div>
+            </div>
+            <div style={{ position: 'relative', width: '80px', height: '80px' }}>
+              <svg viewBox="0 0 36 36" style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)', filter: 'drop-shadow(0 0 12px rgba(10, 132, 255, 0.25))' }}>
+                <circle cx="18" cy="18" r="16" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="3"></circle>
+                <motion.circle 
+                  initial={{ strokeDasharray: "0, 100" }}
+                  animate={{ strokeDasharray: `${progress}, 100` }}
+                  transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+                  cx="18" cy="18" r="16" fill="none" stroke="var(--apple-blue)" strokeWidth="3" strokeLinecap="round"
+                ></motion.circle>
+              </svg>
+              <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '16px', fontWeight: 900 }}>{Math.round(progress)}%</div>
             </div>
           </div>
-          <div style={{ position: 'relative', width: '72px', height: '72px' }}>
-            <svg viewBox="0 0 36 36" style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)', filter: 'drop-shadow(0 0 10px rgba(10, 132, 255, 0.2))' }}>
-              <circle cx="18" cy="18" r="16" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="3.5"></circle>
-              <motion.circle 
-                initial={{ strokeDasharray: "0, 100" }}
-                animate={{ strokeDasharray: `${progress}, 100` }}
-                transition={{ duration: 1, ease: "easeOut" }}
-                cx="18" cy="18" r="16" fill="none" stroke="var(--apple-blue)" strokeWidth="3.5" strokeLinecap="round"
-              ></motion.circle>
-            </svg>
-            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '14px', fontWeight: 800 }}>{Math.round(progress)}%</div>
-          </div>
-        </div>
 
-        <div style={{ display: 'flex', gap: '20px' }}>
-          {[
-            { label: 'Prot', val: macros.p, color: '#FF453A', target: 160 },
-            { label: 'Carbs', val: macros.c, color: '#32D74B', target: 200 },
-            { label: 'Gord', val: macros.f, color: '#FF9F0A', target: 70 }
-          ].map(m => (
-            <div key={m.label} style={{ flex: 1 }}>
-              <div style={{ fontSize: '12px', fontWeight: 700, marginBottom: '8px', color: 'var(--apple-secondary-text)', display: 'flex', justifyContent: 'space-between' }}>
-                <span>{m.label}</span>
-                <span style={{ color: 'white' }}>{m.val}g</span>
+          <div style={{ display: 'flex', gap: '16px' }}>
+            {[
+              { label: 'Proteína', val: macros.p, color: 'var(--apple-red)', target: 160 },
+              { label: 'Carbos', val: macros.c, color: 'var(--apple-green)', target: 200 },
+              { label: 'Gordura', val: macros.f, color: 'var(--apple-orange)', target: 70 }
+            ].map(m => (
+              <div key={m.label} style={{ flex: 1 }}>
+                <div style={{ fontSize: '11px', fontWeight: 800, marginBottom: '8px', color: 'var(--apple-secondary-text)', display: 'flex', justifyContent: 'space-between', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  <span>{m.label}</span>
+                  <span style={{ color: 'white' }}>{m.val}g</span>
+                </div>
+                <div style={{ height: '5px', background: 'rgba(255,255,255,0.08)', borderRadius: '10px', overflow: 'hidden' }}>
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${Math.min((m.val / m.target) * 100, 100)}%` }}
+                    transition={{ duration: 1.2, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                    style={{ height: '100%', background: m.color, boxShadow: `0 0 15px ${m.color}66` }}
+                  ></motion.div>
+                </div>
               </div>
-              <div style={{ height: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '3px', overflow: 'hidden' }}>
-                <motion.div 
-                  initial={{ width: 0 }}
-                  animate={{ width: `${Math.min((m.val / m.target) * 100, 100)}%` }}
-                  transition={{ duration: 1, delay: 0.2 }}
-                  style={{ height: '100%', background: m.color, boxShadow: `0 0 12px ${m.color}44` }}
-                ></motion.div>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
@@ -170,40 +188,79 @@ const DietPlan: React.FC<DietPlanProps> = ({ meals, onAddFood, onAddMeal, onRese
           </div>
         )}
 
-        {meals.map(meal => (
-          <div key={meal.id} className="card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-              <span style={{ fontWeight: 700, fontSize: '18px' }}>{meal.name}</span>
-              <button 
-                onClick={() => handleOpenCatalog(meal.id)}
-                style={{ 
-                  background: 'rgba(10, 132, 255, 0.1)', 
-                  border: 'none', 
-                  color: 'var(--apple-blue)', 
-                  padding: '6px 12px', 
-                  borderRadius: '12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  cursor: 'pointer'
-                }}
-              >
-                <Plus size={14} />
-                Adicionar Alimento
-              </button>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {meal.foods.map((food, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', paddingBottom: i < meal.foods.length -1 ? '8px' : '0', borderBottom: i < meal.foods.length -1 ? '0.5px solid rgba(255,255,255,0.05)' : 'none' }}>
-                  <span style={{ color: 'white' }}>{food.name} <span style={{ color: 'var(--apple-gray)', fontSize: '12px' }}>({food.amount})</span></span>
-                  <span style={{ color: 'var(--apple-gray)', fontWeight: 500 }}>{food.protein}P {food.carbs}C {food.fat}G</span>
+        {meals.map(meal => {
+          const getIcon = (name: string) => {
+            const n = name.toLowerCase();
+            if (n.includes('café') || n.includes('manha')) return <Coffee size={20} />;
+            if (n.includes('almoço')) return <Sun size={20} />;
+            if (n.includes('lanche')) return <Sunset size={20} />;
+            if (n.includes('jantar') || n.includes('ceia')) return <Moon size={20} />;
+            return <Coffee size={20} />;
+          };
+
+          const mealCalories = meal.foods.reduce((sum, f) => sum + f.calories, 0);
+
+          return (
+            <div key={meal.id} className="card" style={{ padding: '20px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--apple-blue)' }}>
+                    {getIcon(meal.name)}
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 800, fontSize: '18px', color: 'white', letterSpacing: '-0.3px' }}>{meal.name}</div>
+                    <div style={{ fontSize: '12px', color: 'var(--apple-tertiary-text)', fontWeight: 600 }}>{mealCalories} kcal estimadas</div>
+                  </div>
                 </div>
-              ))}
+                <button 
+                  onClick={() => handleOpenCatalog(meal.id)}
+                  style={{ 
+                    background: 'rgba(255, 255, 255, 0.08)', 
+                    border: 'none', 
+                    color: 'white', 
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  <Plus size={18} />
+                </button>
+              </div>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {meal.foods.length === 0 ? (
+                  <div style={{ fontSize: '13px', color: 'var(--apple-tertiary-text)', fontStyle: 'italic', padding: '8px 0' }}>Nenhum alimento adicionado</div>
+                ) : (
+                  meal.foods.map((food, i) => (
+                    <div key={i} style={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between', 
+                      alignItems: 'center',
+                      padding: '12px',
+                      background: 'rgba(255,255,255,0.03)',
+                      borderRadius: '14px',
+                      border: '1px solid rgba(255,255,255,0.03)'
+                    }}>
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span style={{ color: 'white', fontWeight: 700, fontSize: '14px' }}>{food.name}</span>
+                        <span style={{ color: 'var(--apple-tertiary-text)', fontSize: '12px', fontWeight: 500 }}>{food.amount}</span>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ color: 'var(--apple-blue)', fontWeight: 800, fontSize: '14px' }}>{food.calories} <span style={{ fontSize: '10px', fontWeight: 600, opacity: 0.7 }}>kcal</span></div>
+                        <div style={{ color: 'var(--apple-tertiary-text)', fontSize: '10px', fontWeight: 700, letterSpacing: '0.4px' }}>{food.protein}P {food.carbs}C {food.fat}G</div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <CatalogModal 

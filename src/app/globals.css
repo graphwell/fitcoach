@@ -7,11 +7,11 @@
   --apple-light-gray: #2C2C2E;
   --apple-dark-gray: #1C1C1E;
   --apple-bg: #000000;
-  --apple-card-bg: #1C1C1E;
+  --apple-card-bg: rgba(28, 28, 30, 0.65);
   --apple-text: #FFFFFF;
   --apple-secondary-text: rgba(235, 235, 245, 0.6);
-  --apple-tertiary-text: rgba(235, 235, 245, 0.3);
-  --apple-green: #30D158;
+  --apple-tertiary-text: rgba(235, 235, 245, 0.35);
+  --apple-green: #32D74B;
   --apple-red: #FF453A;
   --apple-orange: #FF9F0A;
   
@@ -21,12 +21,13 @@
   --spacing-lg: 24px;
   --spacing-xl: 32px;
   
-  --border-radius: 14px;
-  --border-radius-lg: 24px;
+  --border-radius: 16px;
+  --border-radius-lg: 28px;
   
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
-  --shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-  --shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
+  --shadow-blue: 0 8px 24px rgba(10, 132, 255, 0.15);
 }
 
 * {
@@ -50,21 +51,28 @@ body {
 }
 
 .glass {
-  background: rgba(28, 28, 30, 0.75);
-  backdrop-filter: blur(25px) saturate(180%);
-  -webkit-backdrop-filter: blur(25px) saturate(180%);
-  border-top: 0.5px solid rgba(255, 255, 255, 0.08);
+  background: rgba(28, 28, 30, 0.45);
+  backdrop-filter: blur(30px) saturate(190%);
+  -webkit-backdrop-filter: blur(30px) saturate(190%);
+  border-top: 0.5px solid var(--glass-border);
 }
 
 .card {
-  background: linear-gradient(145deg, #2C2C2E 0%, #1C1C1E 100%);
+  background: var(--apple-card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-radius: var(--border-radius-lg);
   padding: var(--spacing-lg);
   box-shadow: var(--shadow);
   margin-bottom: var(--spacing-md);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  border: 1px solid var(--glass-border);
+  transition: transform 0.2s cubic-bezier(0.2, 0, 0.2, 1), border-color 0.2s ease, background 0.2s ease;
   width: 100%;
+}
+
+.card:hover {
+  background: rgba(44, 44, 46, 0.5);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 @media (max-width: 375px) {
@@ -79,20 +87,22 @@ body {
 }
 
 .btn-primary {
-  background-color: var(--apple-blue);
+  background: linear-gradient(180deg, #0A84FF 0%, #0070E0 100%);
   color: white;
   border: none;
-  border-radius: 14px;
-  padding: 14px 24px;
-  font-weight: 600;
+  border-radius: 16px;
+  padding: 14px 28px;
+  font-weight: 700;
   font-size: 16px;
   cursor: pointer;
-  transition: opacity 0.2s, transform 0.1s;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: var(--shadow-blue);
+  letter-spacing: -0.2px;
 }
 
 .btn-primary:active {
-  opacity: 0.8;
-  transform: scale(0.98);
+  transform: scale(0.96);
+  opacity: 0.9;
 }
 
 /* Tab Bar Styling */

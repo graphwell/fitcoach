@@ -12,28 +12,29 @@ interface WorkoutPlanProps {
 const WorkoutPlan: React.FC<WorkoutPlanProps> = ({ workouts }) => {
   return (
     <div style={{ padding: '24px', paddingBottom: '120px', paddingTop: 'env(safe-area-inset-top, 24px)' }}>
-      <div style={{ marginBottom: '32px' }}>
-        <h4 style={{ fontSize: '12px', fontWeight: 800, color: 'var(--apple-blue)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>ROTEIRO DE TREINO</h4>
-        <h1 style={{ fontSize: '36px', fontWeight: 800, margin: 0, color: 'white', letterSpacing: '-0.5px' }}>Treino</h1>
+      <div style={{ marginBottom: '36px' }}>
+        <h4 style={{ fontSize: '11px', fontWeight: 900, color: 'var(--apple-blue)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '6px', opacity: 0.8 }}>ROTEIRO DE TREINO</h4>
+        <h1 style={{ fontSize: '42px', fontWeight: 900, margin: 0, color: 'white', letterSpacing: '-1.5px', lineHeight: 1 }}>Treino</h1>
       </div>
       
-      <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '24px', marginBottom: '8px', scrollbarWidth: 'none' }}>
+      <div style={{ display: 'flex', gap: '14px', overflowX: 'auto', paddingBottom: '28px', margin: '0 -24px 8px -24px', paddingLeft: '24px', paddingRight: '24px', scrollbarWidth: 'none' }}>
         {['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB', 'DOM'].map((d, i) => (
           <motion.div 
             key={d} 
-            whileTap={{ scale: 0.95 }}
+            whileTap={{ scale: 0.94 }}
             style={{ 
-              minWidth: '60px', height: '84px', borderRadius: '18px', 
-              background: i === 0 ? 'var(--apple-blue)' : 'var(--apple-card-bg)',
+              minWidth: '64px', height: '88px', borderRadius: '20px', 
+              background: i === 0 ? 'linear-gradient(180deg, #0A84FF 0%, #0070E0 100%)' : 'var(--apple-card-bg)',
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-              boxShadow: i === 0 ? '0 8px 20px rgba(10, 132, 255, 0.3)' : 'var(--shadow-sm)', 
+              boxShadow: i === 0 ? '0 8px 24px rgba(10, 132, 255, 0.3)' : 'var(--shadow-sm)', 
               color: i === 0 ? 'white' : 'var(--apple-secondary-text)',
-              border: '1px solid rgba(255,255,255,0.05)',
-              cursor: 'pointer'
+              border: i === 0 ? 'none' : '1px solid var(--glass-border)',
+              cursor: 'pointer',
+              backdropFilter: i === 0 ? 'none' : 'blur(20px)'
             }}
           >
-            <span style={{ fontSize: '11px', fontWeight: 700, opacity: 0.8 }}>{d}</span>
-            <span style={{ fontSize: '22px', fontWeight: 800, marginTop: '4px' }}>{i + 14}</span>
+            <span style={{ fontSize: '11px', fontWeight: 800, opacity: 0.8 }}>{d}</span>
+            <span style={{ fontSize: '24px', fontWeight: 900, marginTop: '2px', letterSpacing: '-0.5px' }}>{i + 14}</span>
           </motion.div>
         ))}
       </div>
@@ -46,25 +47,36 @@ const WorkoutPlan: React.FC<WorkoutPlanProps> = ({ workouts }) => {
               <div style={{ fontSize: '24px', fontWeight: 800, marginTop: '4px' }}>{workout.title}</div>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               {workout.exercises.map(ex => (
-                <div key={ex.id} style={{ padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '0.5px solid rgba(255,255,255,0.05)' }}>
+                <div key={ex.id} style={{ 
+                  padding: '16px', 
+                  background: 'rgba(255,255,255,0.04)', 
+                  borderRadius: '16px', 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center', 
+                  border: '1px solid rgba(255,255,255,0.04)',
+                  boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.05)'
+                }}>
                   <div>
-                    <div style={{ fontWeight: 700, fontSize: '16px', color: 'white' }}>{ex.name}</div>
-                    <div style={{ fontSize: '13px', color: 'var(--apple-gray)', marginTop: '2px' }}>{ex.sets} séries • {ex.reps} reps</div>
+                    <div style={{ fontWeight: 800, fontSize: '16px', color: 'white', letterSpacing: '-0.3px' }}>{ex.name}</div>
+                    <div style={{ fontSize: '13px', color: 'var(--apple-tertiary-text)', fontWeight: 600, marginTop: '2px' }}>{ex.sets} séries • {ex.reps} reps</div>
                   </div>
                   <div style={{ 
-                    fontSize: '12px', 
-                    fontWeight: 700, 
-                    padding: '6px 10px', 
-                    background: 'rgba(255,255,255,0.06)', 
-                    borderRadius: '8px', 
+                    fontSize: '11px', 
+                    fontWeight: 800, 
+                    padding: '8px 12px', 
+                    background: 'rgba(10, 132, 255, 0.1)', 
+                    borderRadius: '10px', 
                     color: 'var(--apple-blue)',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '4px'
+                    gap: '6px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.4px'
                   }}>
-                    <Clock size={12} /> {ex.rest}
+                    <Clock size={14} /> {ex.rest}
                   </div>
                 </div>
               ))}

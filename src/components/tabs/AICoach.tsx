@@ -134,15 +134,16 @@ const AICoach: React.FC<AICoachProps> = ({ onPlanUpdate, context }) => {
       paddingTop: 'env(safe-area-inset-top, 0px)'
     }}>
       <div className="glass" style={{ 
-        padding: '12px 20px', 
+        padding: '16px 20px', 
         zIndex: 10, 
         display: 'flex', 
         justifyContent: 'center',
         borderTop: 'none',
         position: 'sticky',
-        top: 0
+        top: 0,
+        boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
       }}>
-        <img src="/logo.png" alt="FitCoach AI" style={{ height: '32px', objectFit: 'contain' }} />
+        <img src="/logo.png" alt="FitCoach AI" style={{ height: '36px', objectFit: 'contain', filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.5))' }} />
       </div>
 
       <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -210,22 +211,24 @@ const AICoach: React.FC<AICoachProps> = ({ onPlanUpdate, context }) => {
       }}>
         <div className="glass" style={{ 
           display: 'flex', 
-          gap: '8px', 
+          gap: '10px', 
           alignItems: 'center', 
-          borderRadius: '28px', 
-          padding: '6px 14px', 
-          border: '1px solid rgba(255,255,255,0.1)',
-          background: 'rgba(44, 44, 46, 0.4)'
+          borderRadius: '30px', 
+          padding: '8px 16px', 
+          border: '1px solid var(--glass-border)',
+          background: 'rgba(255, 255, 255, 0.04)',
+          boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.05)'
         }}>
           <input 
             style={{ 
               flex: 1, 
               background: 'transparent', 
               border: 'none', 
-              padding: '12px 4px', 
+              padding: '12px 2px', 
               fontSize: '16px', 
               outline: 'none', 
-              color: 'white' 
+              color: 'white',
+              fontWeight: 500
             }}
             placeholder="Mude meu treino, substitua ref..."
             value={input}
