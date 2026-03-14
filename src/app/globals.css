@@ -2,13 +2,15 @@
 
 :root {
   --apple-blue: #0A84FF;
+  --apple-blue-rgb: 10, 132, 255;
   --apple-gray: #8E8E93;
-  --apple-light-gray: #48484A;
+  --apple-light-gray: #2C2C2E;
+  --apple-dark-gray: #1C1C1E;
   --apple-bg: #000000;
   --apple-card-bg: #1C1C1E;
   --apple-text: #FFFFFF;
-  --apple-secondary-text: #EBEBF599;
-  --apple-tertiary-text: #EBEBF54D;
+  --apple-secondary-text: rgba(235, 235, 245, 0.6);
+  --apple-tertiary-text: rgba(235, 235, 245, 0.3);
   --apple-green: #30D158;
   --apple-red: #FF453A;
   --apple-orange: #FF9F0A;
@@ -19,11 +21,12 @@
   --spacing-lg: 24px;
   --spacing-xl: 32px;
   
-  --border-radius: 12px;
-  --border-radius-lg: 20px;
+  --border-radius: 14px;
+  --border-radius-lg: 24px;
   
-  --shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.8);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.8);
 }
 
 * {
@@ -46,19 +49,24 @@ body {
 }
 
 .glass {
-  background: rgba(28, 28, 30, 0.8);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-top: 0.5px solid rgba(255, 255, 255, 0.1);
+  background: rgba(28, 28, 30, 0.75);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border-top: 0.5px solid rgba(255, 255, 255, 0.08);
 }
 
 .card {
-  background-color: var(--apple-card-bg);
+  background: linear-gradient(145deg, #2C2C2E 0%, #1C1C1E 100%);
   border-radius: var(--border-radius-lg);
-  padding: var(--spacing-md);
+  padding: var(--spacing-lg);
   box-shadow: var(--shadow);
   margin-bottom: var(--spacing-md);
-  border: 0.5px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.card:active {
+  transform: scale(0.99);
 }
 
 .btn-primary {

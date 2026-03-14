@@ -142,9 +142,31 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   };
 
   return (
-    <div style={{ height: '100vh', padding: '40px 24px', display: 'flex', flexDirection: 'column', background: 'var(--apple-bg)' }}>
-      <div style={{ marginBottom: '40px', display: step === 0 ? 'flex' : 'none', flexDirection: 'column', alignItems: 'center' }}>
-        <img src="/logo.png" alt="FitCoach AI" style={{ height: '80px', marginBottom: '24px', objectFit: 'contain' }} />
+    <div style={{ 
+      height: '100dvh', 
+      padding: 'env(safe-area-inset-top, 20px) 24px env(safe-area-inset-bottom, 20px)', 
+      display: 'flex', 
+      flexDirection: 'column', 
+      background: 'radial-gradient(circle at top right, #1a1a1a, #000000)',
+      color: 'white'
+    }}>
+      <div style={{ 
+        marginTop: '20px',
+        marginBottom: '32px', 
+        display: step === 0 ? 'flex' : 'none', 
+        flexDirection: 'column', 
+        alignItems: 'center' 
+      }}>
+        <div style={{ 
+          padding: '12px', 
+          borderRadius: '20px', 
+          background: 'rgba(255,255,255,0.03)',
+          border: '1px solid rgba(255,255,255,0.05)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+          marginBottom: '16px'
+        }}>
+          <img src="/logo.png" alt="FitCoach AI" style={{ height: '50px', width: 'auto', objectFit: 'contain' }} />
+        </div>
       </div>
       
       {step > 0 && (
@@ -153,7 +175,15 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
         </button>
       )}
 
-      <h1 style={{ fontSize: '30px', fontWeight: 800, marginBottom: '24px', color: 'white' }}>{steps[step].title}</h1>
+      <h1 style={{ 
+        fontSize: '32px', 
+        fontWeight: 800, 
+        letterSpacing: '-0.5px',
+        marginBottom: '28px', 
+        background: 'linear-gradient(to bottom, #fff, #aaa)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent'
+      }}>{steps[step].title}</h1>
       
       <div style={{ flex: 1 }}>
         <AnimatePresence mode="wait">
@@ -169,15 +199,29 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
         </AnimatePresence>
       </div>
 
-      <div style={{ marginTop: 'auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', marginBottom: '24px' }}>
+      <div style={{ marginTop: 'auto', paddingBottom: '20px' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '32px' }}>
           {steps.map((_, i) => (
-            <div key={i} style={{ width: '6px', height: '6px', borderRadius: '3px', background: i === step ? 'var(--apple-blue)' : 'var(--apple-light-gray)' }} />
+            <motion.div 
+              key={i} 
+              animate={{ 
+                width: i === step ? '24px' : '8px',
+                background: i === step ? 'var(--apple-blue)' : 'rgba(255,255,255,0.2)'
+              }}
+              style={{ height: '8px', borderRadius: '4px' }} 
+            />
           ))}
         </div>
         <button 
           className="btn-primary" 
-          style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+          style={{ 
+            width: '100%', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            gap: '8px',
+            boxShadow: '0 8px 20px rgba(10, 132, 255, 0.3)'
+          }}
           onClick={handleNext}
         >
           {step === steps.length - 1 ? 'Concluir' : 'Próximo'} <ChevronRight size={20} />
