@@ -94,22 +94,51 @@ export default function Home() {
       </div>
 
       <div className="tab-bar glass">
-        <div className={`tab-item ${activeTab === 'coach' ? 'active' : ''}`} onClick={() => setActiveTab('coach')}>
-          <MessageCircle size={24} strokeWidth={activeTab === 'coach' ? 2.5 : 2} />
-          <span style={{ marginTop: '2px' }}>Coach</span>
-        </div>
-        <div className={`tab-item ${activeTab === 'diet' ? 'active' : ''}`} onClick={() => setActiveTab('diet')}>
-          <Utensils size={24} strokeWidth={activeTab === 'diet' ? 2.5 : 2} />
-          <span style={{ marginTop: '2px' }}>Dieta</span>
-        </div>
-        <div className={`tab-item ${activeTab === 'workout' ? 'active' : ''}`} onClick={() => setActiveTab('workout')}>
-          <Dumbbell size={24} strokeWidth={activeTab === 'workout' ? 2.5 : 2} />
-          <span style={{ marginTop: '2px' }}>Treino</span>
-        </div>
-        <div className={`tab-item ${activeTab === 'analytics' ? 'active' : ''}`} onClick={() => setActiveTab('analytics')}>
-          <TrendingUp size={24} strokeWidth={activeTab === 'analytics' ? 2.5 : 2} />
-          <span style={{ marginTop: '2px' }}>Progresso</span>
-        </div>
+        {[
+          { id: 'coach', label: 'Coach', icon: <MessageCircle size={24} /> },
+          { id: 'diet', label: 'Dieta', icon: <Utensils size={24} /> },
+          { id: 'workout', label: 'Treino', icon: <Dumbbell size={24} /> },
+          { id: 'analytics', label: 'Progresso', icon: <TrendingUp size={24} /> },
+        ].map((tab) => (
+          <div 
+            key={tab.id} 
+            className={`tab-item ${activeTab === tab.id ? 'active' : ''}`}
+            onClick={() => setActiveTab(tab.id)}
+            style={{ position: 'relative' }}
+          >
+            {activeTab === tab.id && (
+              <motion.div 
+                layoutId="activeTabIndicator"
+                style={{
+                  position: 'absolute',
+                  top: '-12px',
+                  width: '4px',
+                  height: '4px',
+                  borderRadius: '2px',
+                  background: 'var(--apple-blue)',
+                  boxShadow: '0 0 10px var(--apple-blue)'
+                }}
+              />
+            )}
+            <div style={{ 
+              marginBottom: '4px', 
+              opacity: activeTab === tab.id ? 1 : 0.5,
+              transform: activeTab === tab.id ? 'scale(1.1)' : 'scale(1)',
+              transition: 'all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+            }}>
+              {React.cloneElement(tab.icon as React.ReactElement, { 
+                strokeWidth: activeTab === tab.id ? 2.5 : 2 
+              })}
+            </div>
+            <span style={{ 
+              fontSize: '10px', 
+              fontWeight: activeTab === tab.id ? 700 : 500,
+              opacity: activeTab === tab.id ? 1 : 0.7
+            }}>
+              {tab.label}
+            </span>
+          </div>
+        ))}
       </div>
     </div>
   );
