@@ -18,10 +18,19 @@ import Analytics from '@/components/tabs/Analytics';
 export default function Home() {
   const { 
     profile, dietPlan, workoutPlan, cardioData, adherenceData,
-    generateInitialPlans, setDietPlan, setWorkoutPlan, addFoodToMeal, addMeal 
+    generateInitialPlans, setDietPlan, setWorkoutPlan, addFoodToMeal, addMeal,
+    isHydrated
   } = useStore();
   
   const [activeTab, setActiveTab] = useState('coach');
+
+  if (!isHydrated) {
+    return (
+      <div style={{ height: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--apple-bg)', color: 'white' }}>
+        Carregando...
+      </div>
+    );
+  }
 
   const handlePlanUpdate = (type: 'diet' | 'workout', payload: any) => {
     if (type === 'diet') {

@@ -44,32 +44,31 @@ export interface Workout {
 }
 
 export const useStore = () => {
-  const [profile, setProfile] = useState<UserProfile | null>(() => {
-    const saved = localStorage.getItem('fitcoach_profile');
-    return saved ? JSON.parse(saved) : null;
-  });
-
-  const [dietPlan, setDietPlan] = useState<Meal[]>(() => {
-    const saved = localStorage.getItem('fitcoach_diet');
-    return saved ? JSON.parse(saved) : [];
-  });
-
-  const [workoutPlan, setWorkoutPlan] = useState<Workout[]>(() => {
-    const saved = localStorage.getItem('fitcoach_workouts');
-    return saved ? JSON.parse(saved) : [];
-  });
-  
-  const [cardioData, setCardioData] = useState<number[]>(() => {
-    const saved = localStorage.getItem('fitcoach_cardio');
-    return saved ? JSON.parse(saved) : [0, 0, 0, 0, 0, 0, 0];
-  });
-
-  const [adherenceData, setAdherenceData] = useState<number[]>(() => {
-    const saved = localStorage.getItem('fitcoach_adherence');
-    return saved ? JSON.parse(saved) : [100, 100, 100, 100, 100, 100, 100];
-  });
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [dietPlan, setDietPlan] = useState<Meal[]>([]);
+  const [workoutPlan, setWorkoutPlan] = useState<Workout[]>([]);
+  const [cardioData, setCardioData] = useState<number[]>([0, 0, 0, 0, 0, 0, 0]);
+  const [adherenceData, setAdherenceData] = useState<number[]>([100, 100, 100, 100, 100, 100, 100]);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
+    const p = localStorage.getItem('fitcoach_profile');
+    const d = localStorage.getItem('fitcoach_diet');
+    const w = localStorage.getItem('fitcoach_workouts');
+    const c = localStorage.getItem('fitcoach_cardio');
+    const a = localStorage.getItem('fitcoach_adherence');
+
+    if (p) setProfile(JSON.parse(p));
+    if (d) setDietPlan(JSON.parse(d));
+    if (w) setWorkoutPlan(JSON.parse(w));
+    if (c) setCardioData(JSON.parse(c));
+    if (a) setAdherenceData(JSON.parse(a));
+    
+    setIsHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isHydrated) return;
     if (profile) localStorage.setItem('fitcoach_profile', JSON.stringify(profile));
     if (dietPlan.length > 0) localStorage.setItem('fitcoach_diet', JSON.stringify(dietPlan));
     if (workoutPlan.length > 0) localStorage.setItem('fitcoach_workouts', JSON.stringify(workoutPlan));
@@ -176,17 +175,7 @@ export const useStore = () => {
   };
 
   return {
-    profile,
-    dietPlan,
-    workoutPlan,
-    cardioData,
-    adherenceData,
-    generateInitialPlans,
-    setDietPlan,
-    setWorkoutPlan,
-    setCardioData,
-    setAdherenceData,
-    addFoodToMeal,
-    addMeal
+    addMeal,
+    isHydrated
   };
 };

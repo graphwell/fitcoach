@@ -25,11 +25,13 @@ export interface OpenFoodFactsProduct {
 const CACHE_KEY = 'fitcoach_product_cache';
 
 const getCache = (): Record<string, Food> => {
+  if (typeof window === 'undefined') return {};
   const saved = localStorage.getItem(CACHE_KEY);
   return saved ? JSON.parse(saved) : {};
 };
 
 const saveToCache = (barcode: string, food: Food) => {
+  if (typeof window === 'undefined') return;
   const cache = getCache();
   cache[barcode] = food;
   localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
