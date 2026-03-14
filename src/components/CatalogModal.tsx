@@ -65,7 +65,7 @@ const CatalogModal: React.FC<CatalogModalProps> = ({ isOpen, onClose, onSelectPr
     if (page > 1) {
       loadProducts(query, page, true);
     }
-  }, [page]);
+  }, [page, query]);
 
   const getNutriscoreColor = (grade?: string) => {
     switch (grade) {

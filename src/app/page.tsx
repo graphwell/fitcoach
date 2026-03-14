@@ -2,6 +2,9 @@
 
 import React, { useState } from 'react';
 import { 
+  MessageCircle,
+  Utensils,
+  Dumbbell,
   TrendingUp,
   LucideProps
 } from 'lucide-react';
