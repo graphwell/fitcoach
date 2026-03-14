@@ -149,17 +149,18 @@ const AICoach: React.FC<AICoachProps> = ({ onPlanUpdate, context }) => {
         {messages.map((msg) => (
           <div key={msg.id} style={{ alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start', maxWidth: '85%' }}>
             <div style={{ 
-              padding: '14px 18px', 
-              borderRadius: '22px', 
-              fontSize: '15px',
-              lineHeight: '1.5',
+              padding: '12px 16px', 
+              borderRadius: '20px', 
+              fontSize: '14px',
+              lineHeight: '1.45',
               backgroundColor: msg.sender === 'user' ? 'var(--apple-blue)' : 'var(--apple-card-bg)',
               color: 'white',
-              borderBottomRightRadius: msg.sender === 'user' ? '4px' : '22px',
-              borderBottomLeftRadius: msg.sender === 'ai' ? '4px' : '22px',
+              borderBottomRightRadius: msg.sender === 'user' ? '4px' : '20px',
+              borderBottomLeftRadius: msg.sender === 'ai' ? '4px' : '20px',
               border: msg.sender === 'ai' ? '1px solid rgba(255,255,255,0.06)' : 'none',
               boxShadow: msg.sender === 'user' ? '0 4px 12px rgba(10, 132, 255, 0.25)' : 'var(--shadow-sm)',
-              whiteSpace: 'pre-wrap'
+              whiteSpace: 'pre-wrap',
+              wordBreak: 'break-word'
             }}>
               {msg.text}
             </div>
