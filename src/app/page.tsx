@@ -11,6 +11,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore, Meal, Food, Workout, Exercise } from '@/store/useStore';
 import Onboarding from '@/components/Onboarding';
+import AuthScreen from '@/components/AuthScreen';
 import AICoach from '@/components/tabs/AICoach';
 import DietPlan from '@/components/tabs/DietPlan';
 import WorkoutPlan from '@/components/tabs/WorkoutPlan';
