@@ -49,7 +49,10 @@ const WorkoutPlan: React.FC<WorkoutPlanProps> = ({ workouts }) => {
               ))}
             </div>
             
-            <button style={{ width: '100%', marginTop: '24px', padding: '16px', border: 'none', background: 'var(--apple-light-gray)', borderRadius: '14px', fontWeight: 700, color: 'white', fontSize: '15px' }}>
+            <button 
+              onClick={() => alert('Treino iniciado! Prepare-se para a primeira série.')}
+              style={{ width: '100%', marginTop: '24px', padding: '16px', border: 'none', background: 'var(--apple-light-gray)', borderRadius: '14px', fontWeight: 700, color: 'white', fontSize: '15px' }}
+            >
               Iniciar Treino
             </button>
           </div>

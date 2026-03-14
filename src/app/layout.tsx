@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   description: "Seu Coach de Fitness e Nutrição com IA",
   viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
   themeColor: "#000000",
+  manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
