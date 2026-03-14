@@ -29,7 +29,16 @@ Não use JSON para conversas normais, apenas quando for para o sistema realizar 
 Responda sempre em Português (PT-BR).
 `;
 
-export const startChat = (history: any[] = [], context: any) => {
+import { Message } from "@/components/tabs/AICoach";
+import { UserProfile, Meal, Workout } from "@/store/useStore";
+
+export interface ChatContext {
+  profile: UserProfile;
+  dietPlan: Meal[];
+  workoutPlan: Workout[];
+}
+
+export const startChat = (history: Message[] = [], context: ChatContext) => {
   const contextPrompt = `
 DADOS ATUAIS DO USUÁRIO:
 Perfil: ${JSON.stringify(context.profile)}
@@ -50,7 +59,7 @@ Plano de Treino: ${JSON.stringify(context.workoutPlan)}
   });
 };
 
-export const sendMessage = async (chat: any, text: string) => {
+export const sendMessage = async (chat: { sendMessage: (text: string) => Promise<any> }, text: string) => {
   const result = await chat.sendMessage(text);
   return result.response.text();
 };

@@ -90,7 +90,7 @@ export const searchProducts = async (query: string, page: number = 1): Promise<{
     });
     const data = await response.json();
 
-    const foods = (data.products || []).map((p: any) => mapToFood(p));
+    const foods = (data.products || []).map((p: OpenFoodFactsProduct) => mapToFood(p));
     const totalPages = Math.ceil((data.count || 0) / 20);
 
     return { foods, totalPages };

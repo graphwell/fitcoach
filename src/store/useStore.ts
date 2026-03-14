@@ -74,13 +74,14 @@ export const useStore = () => {
     if (workoutPlan.length > 0) localStorage.setItem('fitcoach_workouts', JSON.stringify(workoutPlan));
     localStorage.setItem('fitcoach_cardio', JSON.stringify(cardioData));
     localStorage.setItem('fitcoach_adherence', JSON.stringify(adherenceData));
-  }, [profile, dietPlan, workoutPlan, cardioData, adherenceData]);
+  }, [profile, dietPlan, workoutPlan, cardioData, adherenceData, isHydrated]);
 
   const generateInitialPlans = (prof: UserProfile) => {
     // Lógica básica para geração de plano inicial
     const isGaining = prof.goal === 'gain_muscle';
     const baseCalories = prof.gender === 'male' ? 2500 : 1900;
     const targetCalories = isGaining ? baseCalories + 300 : baseCalories - 300;
+    console.log(`Generating plans for ${targetCalories} kcal`);
     
     const initialDiet: Meal[] = [
       {
