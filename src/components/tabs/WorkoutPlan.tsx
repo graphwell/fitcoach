@@ -2,6 +2,8 @@
 
 import React from 'react';
 import { Workout } from '@/store/useStore';
+import { motion } from 'framer-motion';
+import { Play, Clock } from 'lucide-react';
 
 interface WorkoutPlanProps {
   workouts: Workout[];
