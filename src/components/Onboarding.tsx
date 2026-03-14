@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, ChevronLeft, Dumbbell } from 'lucide-react';
+import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { UserProfile } from '@/store/useStore';
 
 interface OnboardingProps {

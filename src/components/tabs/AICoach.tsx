@@ -1,10 +1,9 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Send, CheckCircle2, Loader2 } from 'lucide-react';
 import { startChat, sendMessage } from '@/services/geminiService';
-import { Meal, Workout } from '@/store/useStore';
+import { useStore } from '@/store/useStore';
 
 export interface Message {
   id: string;

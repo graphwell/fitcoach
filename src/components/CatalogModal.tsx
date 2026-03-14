@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Search, X, Scan, Loader2, RefreshCw } from 'lucide-react';
-import { Food, useStore } from '@/store/useStore';
+import { Search, X, Scan, Loader2 } from 'lucide-react';
+import { Food } from '@/store/useStore';
 import { searchProducts } from '@/services/nutritionService';
 import ProductPreview from './ProductPreview';
 import ScannerModal from './ScannerModal';

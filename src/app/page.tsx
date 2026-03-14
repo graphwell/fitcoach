@@ -2,10 +2,8 @@
 
 import React, { useState } from 'react';
 import { 
-  MessageCircle, 
-  Utensils, 
-  Dumbbell, 
-  TrendingUp
+  TrendingUp,
+  LucideProps
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore, Meal, Food, Workout, Exercise } from '@/store/useStore';
@@ -126,7 +124,7 @@ export default function Home() {
               transform: activeTab === tab.id ? 'scale(1.1)' : 'scale(1)',
               transition: 'all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
             }}>
-              {React.cloneElement(tab.icon as React.ReactElement, { 
+              {React.cloneElement(tab.icon as React.ReactElement<LucideProps>, { 
                 strokeWidth: activeTab === tab.id ? 2.5 : 2 
               })}
             </div>

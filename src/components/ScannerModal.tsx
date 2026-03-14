@@ -49,7 +49,7 @@ const ScannerModal: React.FC<ScannerModalProps> = ({ isOpen, onClose, onProductD
           }
         };
 
-        const onScanFailure = (error: any) => {
+        const onScanFailure = () => {
           // Quietly continue
         };
 
