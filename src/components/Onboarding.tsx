@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
-import { UserProfile, useStore } from '@/store/useStore';
+import { UserProfile } from '@/store/useStore';
 
 interface OnboardingProps {
   onComplete: (profile: UserProfile) => void;

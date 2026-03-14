@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { User } from 'firebase/auth';
 import { loginWithGoogle, logout as firebaseLogout, subscribeToAuthChanges } from '@/services/authService';
 import { saveUserData, loadUserData } from '@/services/userService';
@@ -97,43 +97,19 @@ export const useStore = () => {
     }
   }, [isHydrated]);
 
-  // Sync to LocalStorage AND Firestore
-  useEffect(() => {
-    if (!isHydrated) return;
-    
-    // Save to Local
-    if (profile) localStorage.setItem('fitcoach_profile', JSON.stringify(profile));
-    if (dietPlan.length > 0) localStorage.setItem('fitcoach_diet', JSON.stringify(dietPlan));
-    if (workoutPlan.length > 0) localStorage.setItem('fitcoach_workouts', JSON.stringify(workoutPlan));
-    localStorage.setItem('fitcoach_cardio', JSON.stringify(cardioData));
-    localStorage.setItem('fitcoach_adherence', JSON.stringify(adherenceData));
-
-    // Sync to Cloud if authenticated
-    if (user) {
-      saveUserData(user.uid, {
-        profile,
-        dietPlan,
-        workoutPlan,
-        cardioData,
-        adherenceData
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile, dietPlan, workoutPlan, cardioData, adherenceData, isHydrated, user, generateInitialPlans, setDietPlan, setWorkoutPlan, addFoodToMeal, addMeal]); // Added missing store deps
-
-  const signIn = async () => {
+  const signIn = useCallback(async () => {
     await loginWithGoogle();
-  };
+  }, []);
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     await firebaseLogout();
     setProfile(null);
     setDietPlan([]);
     setWorkoutPlan([]);
     localStorage.clear();
-  };
+  }, []);
 
-  const generateInitialPlans = (prof: UserProfile) => {
+  const generateInitialPlans = useCallback((prof: UserProfile) => {
     const isGaining = prof.goal === 'gain_muscle';
     const baseCalories = prof.gender === 'male' ? 2500 : 1900;
     const targetCalories = isGaining ? baseCalories + 300 : baseCalories - 300;
@@ -205,21 +181,44 @@ export const useStore = () => {
     setDietPlan(initialDiet);
     setWorkoutPlan(initialWorkouts);
     setProfile(prof);
-  };
+  }, []);
 
-  const addFoodToMeal = (mealId: string, food: Food) => {
+  const addFoodToMeal = useCallback((mealId: string, food: Food) => {
     setDietPlan(prev => prev.map(meal => {
       if (meal.id === mealId) {
         return { ...meal, foods: [...meal.foods, food] };
       }
       return meal;
     }));
-  };
+  }, []);
 
-  const addMeal = (name: string) => {
+  const addMeal = useCallback((name: string) => {
     const newMeal: Meal = { id: Date.now().toString(), name, foods: [] };
     setDietPlan(prev => [...prev, newMeal]);
-  };
+  }, []);
+
+  // Sync to LocalStorage AND Firestore
+  useEffect(() => {
+    if (!isHydrated) return;
+    
+    // Save to Local
+    if (profile) localStorage.setItem('fitcoach_profile', JSON.stringify(profile));
+    if (dietPlan.length > 0) localStorage.setItem('fitcoach_diet', JSON.stringify(dietPlan));
+    if (workoutPlan.length > 0) localStorage.setItem('fitcoach_workouts', JSON.stringify(workoutPlan));
+    localStorage.setItem('fitcoach_cardio', JSON.stringify(cardioData));
+    localStorage.setItem('fitcoach_adherence', JSON.stringify(adherenceData));
+
+    // Sync to Cloud if authenticated
+    if (user) {
+      saveUserData(user.uid, {
+        profile,
+        dietPlan,
+        workoutPlan,
+        cardioData,
+        adherenceData
+      });
+    }
+  }, [profile, dietPlan, workoutPlan, cardioData, adherenceData, isHydrated, user]);
 
   return {
     user,
