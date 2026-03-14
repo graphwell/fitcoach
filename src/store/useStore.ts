@@ -246,6 +246,7 @@ export const useStore = () => {
     setAdherenceData,
     addFoodToMeal,
     addMeal,
+    applyNewDietPlan,
     isHydrated
   };
 };

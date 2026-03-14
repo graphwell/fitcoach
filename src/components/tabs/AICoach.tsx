@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Send, CheckCircle2, Loader2 } from 'lucide-react';
 import { startChat, sendMessage } from '@/services/geminiService';
+import CoachDietEvaluationScreen from '../modals/CoachDietEvaluationScreen';
 
 export interface Message {
   id: string;
@@ -37,6 +38,7 @@ const AICoach: React.FC<AICoachProps> = ({ onPlanUpdate, context }) => {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showEvaluation, setShowEvaluation] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const chatInstance = useRef<any>(null);
 
@@ -137,14 +139,38 @@ const AICoach: React.FC<AICoachProps> = ({ onPlanUpdate, context }) => {
         padding: '16px 20px', 
         zIndex: 10, 
         display: 'flex', 
-        justifyContent: 'center',
+        flexDirection: 'column',
+        gap: '12px',
         borderTop: 'none',
         position: 'sticky',
         top: 0,
         boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
       }}>
-        <img src="/logo.png" alt="FitCoach AI" style={{ height: '36px', objectFit: 'contain', filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.5))' }} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <img src="/logo.png" alt="FitCoach AI" style={{ height: '32px', objectFit: 'contain' }} />
+          <button 
+            onClick={() => setShowEvaluation(true)}
+            style={{ 
+              background: 'rgba(48, 209, 88, 0.1)', 
+              color: '#30d158', 
+              border: 'none', 
+              padding: '8px 14px', 
+              borderRadius: '20px', 
+              fontSize: '11px', 
+              fontWeight: 800,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+          >
+             DIETA PERSONALIZADA
+          </button>
+        </div>
       </div>
+
+      {showEvaluation && (
+        <CoachDietEvaluationScreen onClose={() => setShowEvaluation(false)} />
+      )}
 
       <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
         {messages.map((msg) => (
