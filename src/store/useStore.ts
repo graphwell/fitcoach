@@ -116,6 +116,7 @@ export const useStore = () => {
         adherenceData
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile, dietPlan, workoutPlan, cardioData, adherenceData, isHydrated, user]);
 
   const signIn = async () => {

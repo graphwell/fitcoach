@@ -5,7 +5,8 @@ import {
   MessageCircle,
   Utensils,
   Dumbbell,
-  TrendingUp
+  TrendingUp,
+  LucideProps
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore, Meal, Food, Workout, Exercise } from '@/store/useStore';
