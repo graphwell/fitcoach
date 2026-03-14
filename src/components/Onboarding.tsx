@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
-import { UserProfile } from '@/store/useStore';
+import { UserProfile, useStore } from '@/store/useStore';
 
 interface OnboardingProps {
   onComplete: (profile: UserProfile) => void;
@@ -19,10 +19,42 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
 
   const steps = [
     {
-      title: "Conte-nos sobre você",
+      title: "Seja bem-vindo",
       content: (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div className="input-group">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', textAlign: 'center' }}>
+          <p style={{ color: 'var(--apple-secondary-text)', fontSize: '16px', lineHeight: '1.5' }}>
+            Vamos criar seu plano de elite baseado em ciência. Se já tem uma conta, entre agora para sincronizar.
+          </p>
+          
+          <button 
+            onClick={signIn}
+            style={{ 
+              background: 'white', 
+              color: 'black', 
+              border: 'none', 
+              borderRadius: '14px', 
+              padding: '16px', 
+              fontWeight: 700, 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              gap: '12px',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+            id="google-login-btn"
+          >
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style={{ width: '20px' }} />
+            Entrar com Google
+          </button>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '8px 0' }}>
+            <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.1)' }}></div>
+            <span style={{ fontSize: '12px', color: 'var(--apple-tertiary-text)', fontWeight: 700 }}>OU COMECE DO ZERO</span>
+            <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.1)' }}></div>
+          </div>
+
+          <div className="input-group" style={{ textAlign: 'left' }}>
             <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', color: 'var(--apple-gray)' }}>Idade</label>
             <input 
               type="number" 
@@ -32,6 +64,9 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
               placeholder="ex: 25"
             />
           </div>
+        </div>
+      )
+    },
           <div style={{ display: 'flex', gap: '16px' }}>
             <div style={{ flex: 1 }}>
               <label style={{ display: 'block', fontSize: '14px', marginBottom: '8px', color: 'var(--apple-gray)' }}>Peso (kg)</label>

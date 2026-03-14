@@ -18,6 +18,7 @@ import Analytics from '@/components/tabs/Analytics';
 
 export default function Home() {
   const { 
+    user, signIn, signOut,
     profile, dietPlan, workoutPlan, cardioData, adherenceData,
     generateInitialPlans, setDietPlan, setWorkoutPlan, addFoodToMeal, addMeal,
     isHydrated
@@ -58,7 +59,7 @@ export default function Home() {
     }
   };
 
-  if (!profile) {
+  if (!profile && !user) {
     return <Onboarding onComplete={generateInitialPlans} />;
   }
 
@@ -140,6 +141,18 @@ export default function Home() {
             </span>
           </div>
         ))}
+        {user && (
+          <div 
+            className="tab-item"
+            onClick={signOut}
+            style={{ color: 'var(--apple-red)', opacity: 0.8 }}
+          >
+            <div style={{ marginBottom: '4px' }}>
+              <TrendingUp size={24} style={{ transform: 'rotate(180deg)' }} />
+            </div>
+            <span style={{ fontSize: '10px', fontWeight: 700 }}>Sair</span>
+          </div>
+        )}
       </div>
     </div>
   );

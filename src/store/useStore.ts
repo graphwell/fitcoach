@@ -1,6 +1,7 @@
-'use client';
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { User } from 'firebase/auth';
+import { loginWithGoogle, logout as firebaseLogout, subscribeToAuthChanges } from '@/services/authService';
+import { saveUserData, loadUserData } from '@/services/userService';
 
 export interface UserProfile {
   age: number;
@@ -44,6 +45,7 @@ export interface Workout {
 }
 
 export const useStore = () => {
+  const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [dietPlan, setDietPlan] = useState<Meal[]>([]);
   const [workoutPlan, setWorkoutPlan] = useState<Workout[]>([]);
@@ -51,6 +53,28 @@ export const useStore = () => {
   const [adherenceData, setAdherenceData] = useState<number[]>([100, 100, 100, 100, 100, 100, 100]);
   const [isHydrated, setIsHydrated] = useState(false);
 
+  // Auth Listener
+  useEffect(() => {
+    const unsubscribe = subscribeToAuthChanges(async (firebaseUser) => {
+      setUser(firebaseUser);
+      
+      if (firebaseUser) {
+        // Ao logar, tenta carregar dados do nuvem
+        const cloudData = await loadUserData(firebaseUser.uid);
+        if (cloudData) {
+          if (cloudData.profile) setProfile(cloudData.profile);
+          if (cloudData.dietPlan) setDietPlan(cloudData.dietPlan);
+          if (cloudData.workoutPlan) setWorkoutPlan(cloudData.workoutPlan);
+          if (cloudData.cardioData) setCardioData(cloudData.cardioData);
+          if (cloudData.adherenceData) setAdherenceData(cloudData.adherenceData);
+        }
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Hydration from LocalStorage (Fallback/Seed)
   useEffect(() => {
     try {
       const p = localStorage.getItem('fitcoach_profile');
@@ -59,35 +83,57 @@ export const useStore = () => {
       const c = localStorage.getItem('fitcoach_cardio');
       const a = localStorage.getItem('fitcoach_adherence');
 
-      if (p) setProfile(JSON.parse(p));
-      if (d) setDietPlan(JSON.parse(d));
-      if (w) setWorkoutPlan(JSON.parse(w));
-      if (c) setCardioData(JSON.parse(c));
-      if (a) setAdherenceData(JSON.parse(a));
+      if (!profile && p) setProfile(JSON.parse(p));
+      if (dietPlan.length === 0 && d) setDietPlan(JSON.parse(d));
+      if (workoutPlan.length === 0 && w) setWorkoutPlan(JSON.parse(w));
+      if (c && cardioData.every(v => v === 0)) setCardioData(JSON.parse(c));
+      if (a && adherenceData.every(v => v === 100)) setAdherenceData(JSON.parse(a));
     } catch (e) {
       console.error("Error loading state from localStorage:", e);
-      // Clear potentially corrupted data
-      localStorage.clear();
     } finally {
       setIsHydrated(true);
     }
-  }, []);
+  }, [isHydrated]);
 
+  // Sync to LocalStorage AND Firestore
   useEffect(() => {
     if (!isHydrated) return;
+    
+    // Save to Local
     if (profile) localStorage.setItem('fitcoach_profile', JSON.stringify(profile));
     if (dietPlan.length > 0) localStorage.setItem('fitcoach_diet', JSON.stringify(dietPlan));
     if (workoutPlan.length > 0) localStorage.setItem('fitcoach_workouts', JSON.stringify(workoutPlan));
     localStorage.setItem('fitcoach_cardio', JSON.stringify(cardioData));
     localStorage.setItem('fitcoach_adherence', JSON.stringify(adherenceData));
-  }, [profile, dietPlan, workoutPlan, cardioData, adherenceData, isHydrated]);
+
+    // Sync to Cloud if authenticated
+    if (user) {
+      saveUserData(user.uid, {
+        profile,
+        dietPlan,
+        workoutPlan,
+        cardioData,
+        adherenceData
+      });
+    }
+  }, [profile, dietPlan, workoutPlan, cardioData, adherenceData, isHydrated, user]);
+
+  const signIn = async () => {
+    await loginWithGoogle();
+  };
+
+  const signOut = async () => {
+    await firebaseLogout();
+    setProfile(null);
+    setDietPlan([]);
+    setWorkoutPlan([]);
+    localStorage.clear();
+  };
 
   const generateInitialPlans = (prof: UserProfile) => {
-    // Lógica básica para geração de plano inicial
     const isGaining = prof.goal === 'gain_muscle';
     const baseCalories = prof.gender === 'male' ? 2500 : 1900;
     const targetCalories = isGaining ? baseCalories + 300 : baseCalories - 300;
-    console.log(`Generating plans for ${targetCalories} kcal`);
     
     const initialDiet: Meal[] = [
       {
@@ -109,9 +155,7 @@ export const useStore = () => {
       {
         id: '3',
         name: 'Lanche',
-        foods: [
-          { name: 'Banana', amount: '1 média', protein: 1, carbs: 27, fat: 0, calories: 105 }
-        ]
+        foods: [{ name: 'Banana', amount: '1 média', protein: 1, carbs: 27, fat: 0, calories: 105 }]
       },
       {
         id: '4',
@@ -121,11 +165,7 @@ export const useStore = () => {
           { name: 'Batata Doce', amount: '150g', protein: 3, carbs: 30, fat: 0, calories: 130 }
         ]
       },
-      {
-        id: '5',
-        name: 'Ceia',
-        foods: []
-      }
+      { id: '5', name: 'Ceia', foods: [] }
     ];
 
     const initialWorkouts: Workout[] = [
@@ -173,15 +213,14 @@ export const useStore = () => {
   };
 
   const addMeal = (name: string) => {
-    const newMeal: Meal = {
-      id: Date.now().toString(),
-      name,
-      foods: []
-    };
+    const newMeal: Meal = { id: Date.now().toString(), name, foods: [] };
     setDietPlan(prev => [...prev, newMeal]);
   };
 
   return {
+    user,
+    signIn,
+    signOut,
     profile,
     dietPlan,
     workoutPlan,
