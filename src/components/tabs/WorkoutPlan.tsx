@@ -51,8 +51,18 @@ const WorkoutPlan: React.FC<WorkoutPlanProps> = ({ workouts }) => {
                     <div style={{ fontWeight: 700, fontSize: '16px', color: 'white' }}>{ex.name}</div>
                     <div style={{ fontSize: '13px', color: 'var(--apple-gray)', marginTop: '2px' }}>{ex.sets} séries • {ex.reps} reps</div>
                   </div>
-                  <div style={{ fontSize: '12px', fontWeight: 700, padding: '6px 10px', background: 'rgba(255,255,255,0.08)', borderRadius: '8px', color: 'white' }}>
-                    {ex.rest}
+                  <div style={{ 
+                    fontSize: '12px', 
+                    fontWeight: 700, 
+                    padding: '6px 10px', 
+                    background: 'rgba(255,255,255,0.06)', 
+                    borderRadius: '8px', 
+                    color: 'var(--apple-blue)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}>
+                    <Clock size={12} /> {ex.rest}
                   </div>
                 </div>
               ))}

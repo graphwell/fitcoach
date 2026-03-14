@@ -87,14 +87,19 @@ const CatalogModal: React.FC<CatalogModalProps> = ({ isOpen, onClose, onSelectPr
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'rgba(0,0,0,0.9)',
+      background: 'rgba(0,0,0,0.85)',
+      backdropFilter: 'blur(10px)',
       zIndex: 1500,
       display: 'flex',
       flexDirection: 'column',
       color: 'white'
     }}>
       {/* Header with Search */}
-      <div style={{ padding: '20px', background: 'var(--apple-bg)', borderBottom: '0.5px solid rgba(255,255,255,0.1)' }}>
+      <div className="glass" style={{ 
+        padding: '24px 20px', 
+        paddingTop: 'env(safe-area-inset-top, 24px)', 
+        borderBottom: '1px solid rgba(255,255,255,0.08)' 
+      }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
           <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 700 }}>Catálogo</h2>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'white' }}>
@@ -103,7 +108,7 @@ const CatalogModal: React.FC<CatalogModalProps> = ({ isOpen, onClose, onSelectPr
         </div>
         
         <div style={{ position: 'relative' }}>
-          <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--apple-gray)' }} />
+          <Search size={18} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--apple-tertiary-text)' }} />
           <input 
             type="text" 
             placeholder="Busque por nome ou marca..."
@@ -111,13 +116,14 @@ const CatalogModal: React.FC<CatalogModalProps> = ({ isOpen, onClose, onSelectPr
             onChange={(e) => setQuery(e.target.value)}
             style={{
               width: '100%',
-              background: 'var(--apple-light-gray)',
-              border: 'none',
-              borderRadius: '12px',
-              padding: '12px 12px 12px 40px',
+              background: 'rgba(255,255,255,0.05)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '14px',
+              padding: '14px 14px 14px 44px',
               color: 'white',
               fontSize: '16px',
-              outline: 'none'
+              outline: 'none',
+              transition: 'border-color 0.2s'
             }}
           />
         </div>
@@ -192,11 +198,22 @@ const CatalogModal: React.FC<CatalogModalProps> = ({ isOpen, onClose, onSelectPr
       </div>
 
       {/* Footer with Scan Button */}
-      <div style={{ padding: '20px', background: 'var(--apple-bg)', borderTop: '0.5px solid rgba(255,255,255,0.1)' }}>
+      <div className="glass" style={{ 
+        padding: '20px', 
+        paddingBottom: 'calc(20px + env(safe-area-inset-bottom, 0px))',
+        borderTop: '1px solid rgba(255,255,255,0.08)' 
+      }}>
         <button 
           onClick={() => setIsScannerOpen(true)}
           className="btn-primary" 
-          style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+          style={{ 
+            width: '100%', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            gap: '8px',
+            boxShadow: '0 8px 32px rgba(10, 132, 255, 0.3)'
+          }}
         >
           <Scan size={20} />
           Escanear Alimento
