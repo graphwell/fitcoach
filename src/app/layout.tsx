@@ -32,6 +32,8 @@ export const viewport = {
   themeColor: "#000000",
 };
 
+import { StoreProvider } from "@/store/StoreContext";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -42,7 +44,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <StoreProvider>
+          {children}
+        </StoreProvider>
       </body>
     </html>
   );

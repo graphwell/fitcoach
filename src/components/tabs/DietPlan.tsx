@@ -13,8 +13,22 @@ interface DietPlanProps {
   onReset: () => void;
 }
 
-const DietPlan: React.FC<DietPlanProps> = ({ meals, onAddFood, onAddMeal, onReset }) => {
-  const { deleteMeal, removeFoodFromMeal, updateMeal } = useStore();
+const DietPlan: React.FC = () => {
+  const { 
+    dietPlan: meals, 
+    addFoodToMeal: onAddFood, 
+    addMeal: onAddMeal, 
+    generateInitialPlans, 
+    profile, 
+    deleteMeal, 
+    removeFoodFromMeal, 
+    updateMeal 
+  } = useStore();
+  
+  const onReset = () => {
+    if (profile) generateInitialPlans(profile);
+  };
+
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   const [activeMealId, setActiveMealId] = useState<string | null>(null);
   const [isAddingMeal, setIsAddingMeal] = useState(false);
@@ -105,7 +119,6 @@ const DietPlan: React.FC<DietPlanProps> = ({ meals, onAddFood, onAddMeal, onRese
       </div>
       
       <div className="card" style={{ padding: '24px', position: 'relative', overflow: 'hidden' }}>
-        {/* Subtle background glow */}
         <div style={{ position: 'absolute', top: '-50px', right: '-50px', width: '200px', height: '200px', background: 'var(--apple-blue)', filter: 'blur(100px)', opacity: 0.1, zIndex: 0 }}></div>
         
         <div style={{ position: 'relative', zIndex: 1 }}>
@@ -189,13 +202,7 @@ const DietPlan: React.FC<DietPlanProps> = ({ meals, onAddFood, onAddMeal, onRese
               }}
             />
             <div style={{ display: 'flex', gap: '8px' }}>
-              <button 
-                onClick={handleAddMeal}
-                className="btn-primary" 
-                style={{ flex: 1, padding: '10px' }}
-              >
-                Salvar
-              </button>
+              <button onClick={handleAddMeal} className="btn-primary" style={{ flex: 1, padding: '10px' }}>Salvar</button>
               <button 
                 onClick={() => setIsAddingMeal(false)}
                 style={{ flex: 1, background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '12px', color: 'white' }}
@@ -223,13 +230,15 @@ const DietPlan: React.FC<DietPlanProps> = ({ meals, onAddFood, onAddMeal, onRese
               key={meal.id} 
               className="card" 
               style={{ padding: '20px', position: 'relative' }}
-              onMouseDown={() => startLongPress(meal.id)}
               onMouseUp={endLongPress}
               onMouseLeave={endLongPress}
-              onTouchStart={() => startLongPress(meal.id)}
               onTouchEnd={endLongPress}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
+              <div 
+                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}
+                onMouseDown={() => startLongPress(meal.id)}
+                onTouchStart={() => startLongPress(meal.id)}
+              >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--apple-blue)' }}>
                     {getIcon(meal.name)}
@@ -240,28 +249,10 @@ const DietPlan: React.FC<DietPlanProps> = ({ meals, onAddFood, onAddMeal, onRese
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <button 
-                    onClick={() => { setEditingMeal({ id: meal.id, name: meal.name }); }}
-                    style={{ background: 'none', border: 'none', color: 'var(--apple-tertiary-text)', padding: '4px' }}
-                  >
+                  <button onClick={() => setEditingMeal({ id: meal.id, name: meal.name })} style={{ background: 'none', border: 'none', color: 'var(--apple-tertiary-text)', padding: '4px' }}>
                     <MoreVertical size={18} />
                   </button>
-                  <button 
-                    onClick={() => handleOpenCatalog(meal.id)}
-                    style={{ 
-                      background: 'rgba(255, 255, 255, 0.08)', 
-                      border: 'none', 
-                      color: 'white', 
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '50%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s'
-                    }}
-                  >
+                  <button onClick={() => handleOpenCatalog(meal.id)} style={{ background: 'rgba(255, 255, 255, 0.08)', border: 'none', color: 'white', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Plus size={18} />
                   </button>
                 </div>
@@ -313,26 +304,20 @@ const DietPlan: React.FC<DietPlanProps> = ({ meals, onAddFood, onAddMeal, onRese
               <AnimatePresence>
                 {longPressedItem?.mealId === meal.id && longPressedItem?.foodIndex === undefined && (
                   <motion.div 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px', borderRadius: '24px', zIndex: 10 }}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '24px', borderRadius: '24px', zIndex: 100 }}
                   >
                     <button onClick={() => { setEditingMeal({ id: meal.id, name: meal.name }); setLongPressedItem(null); }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', color: 'white', background: 'none', border: 'none' }}>
-                      <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Edit3 size={20} />
-                      </div>
+                      <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Edit3 size={24} /></div>
                       <span style={{ fontSize: '12px', fontWeight: 700 }}>Editar</span>
                     </button>
-                    <button onClick={() => { deleteMeal(meal.id); setLongPressedItem(null); }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', color: 'var(--apple-red)', background: 'none', border: 'none' }}>
-                      <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(255, 69, 58, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Trash2 size={20} />
-                      </div>
-                      <span style={{ fontSize: '12px', fontWeight: 700 }}>Apagar</span>
+                    <button onClick={() => { if(window.confirm('Excluir refeição?')) { deleteMeal(meal.id); setLongPressedItem(null); } }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', color: 'var(--apple-red)', background: 'none', border: 'none' }}>
+                      <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(255, 69, 58, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Trash2 size={24} /></div>
+                      <span style={{ fontSize: '12px', fontWeight: 700 }}>Excluir</span>
                     </button>
-                    <button onClick={() => setLongPressedItem(null)} style={{ position: 'absolute', top: '12px', right: '12px', color: 'white', background: 'none', border: 'none' }}>
-                      <X size={20} />
-                    </button>
+                    <button onClick={() => setLongPressedItem(null)} style={{ position: 'absolute', top: '16px', right: '16px', color: 'var(--apple-gray)', background: 'none', border: 'none' }}><X size={20} /></button>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -341,45 +326,20 @@ const DietPlan: React.FC<DietPlanProps> = ({ meals, onAddFood, onAddMeal, onRese
         })}
       </div>
 
-      <CatalogModal 
-        isOpen={isCatalogOpen} 
-        onClose={() => setIsCatalogOpen(false)} 
-        onSelectProduct={handleProductDetected} 
-      />
+      <CatalogModal isOpen={isCatalogOpen} onClose={() => setIsCatalogOpen(false)} onSelectProduct={handleProductDetected} />
 
       {editingMeal && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 1100, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
           <div className="card" style={{ width: '100%', maxWidth: '350px', padding: '24px' }}>
             <h3 style={{ margin: '0 0 20px 0' }}>Editar Refeição</h3>
-            <input 
-              type="text" 
-              value={editingMeal.name} 
-              onChange={e => setEditingMeal({...editingMeal, name: e.target.value})}
-              style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '14px', color: 'white', marginBottom: '20px' }}
-            />
+            <input type="text" value={editingMeal.name} onChange={e => setEditingMeal({...editingMeal, name: e.target.value})} style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '14px', color: 'white', marginBottom: '20px' }} />
             <div style={{ display: 'flex', gap: '12px' }}>
-              <button 
-                onClick={() => { updateMeal(editingMeal.id, editingMeal.name); setEditingMeal(null); }}
-                className="btn-primary" 
-                style={{ flex: 1, padding: '12px' }}
-              >
-                Salvar
-              </button>
-              <button 
-                onClick={() => setEditingMeal(null)}
-                style={{ flex: 1, background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '12px', color: 'white' }}
-              >
-                Cancelar
-              </button>
+              <button onClick={() => { updateMeal(editingMeal.id, editingMeal.name); setEditingMeal(null); }} className="btn-primary" style={{ flex: 1, padding: '12px' }}>Salvar</button>
+              <button onClick={() => setEditingMeal(null)} style={{ flex: 1, background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '12px', color: 'white' }}>Cancelar</button>
             </div>
           </div>
         </div>
       )}
-      <CatalogModal 
-        isOpen={isCatalogOpen} 
-        onClose={() => setIsCatalogOpen(false)} 
-        onSelectProduct={handleProductDetected} 
-      />
     </div>
   );
 };

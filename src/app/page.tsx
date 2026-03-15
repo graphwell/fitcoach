@@ -20,11 +20,8 @@ import WorkoutPlan from '@/components/tabs/WorkoutPlan';
 import Analytics from '@/components/tabs/Analytics';
 
 export default function Home() {
-  const {
-    user, signOut,
-    profile, dietPlan, workoutPlan, cardioData, adherenceData,
-    generateInitialPlans, setDietPlan, setWorkoutPlan, addFoodToMeal, addMeal,
-    isHydrated
+  const { 
+    user, signOut, isHydrated, profile
   } = useStore();
 
   const [activeTab, setActiveTab] = useState('coach');
@@ -37,37 +34,12 @@ export default function Home() {
     );
   }
 
-  const handlePlanUpdate = (type: 'diet' | 'workout', payload: { mealId?: string, food?: Food, day?: string, exerciseId?: string, newExercise?: any }) => {
-    if (type === 'diet' && payload.mealId && payload.food) {
-      const newDiet = dietPlan.map((meal: Meal) => {
-        if (meal.id === payload.mealId) {
-          return { ...meal, foods: [payload.food!] };
-        }
-        return meal;
-      });
-      setDietPlan(newDiet);
-    } else if (type === 'workout' && payload.day && payload.exerciseId && payload.newExercise) {
-      const newWorkouts = workoutPlan.map((w: Workout) => {
-        if (w.day === payload.day) {
-          return {
-            ...w,
-            exercises: w.exercises.map((ex: Exercise) =>
-              ex.id === payload.exerciseId ? { ...ex, ...payload.newExercise } : ex
-            )
-          };
-        }
-        return w;
-      });
-      setWorkoutPlan(newWorkouts);
-    }
-  };
-
   if (!user) {
     return <AuthScreen />;
   }
 
   if (!profile) {
-    return <Onboarding onComplete={generateInitialPlans} />;
+    return <Onboarding onComplete={() => {}} />; // useStore handles sync
   }
 
   return (
@@ -82,22 +54,10 @@ export default function Home() {
             transition={{ duration: 0.2, ease: "easeInOut" }}
             style={{ height: '100%' }}
           >
-            {activeTab === 'coach' && (
-              <AICoach
-                onPlanUpdate={handlePlanUpdate}
-                context={{ profile, dietPlan, workoutPlan }}
-              />
-            )}
-            {activeTab === 'diet' && (
-              <DietPlan
-                meals={dietPlan}
-                onAddFood={addFoodToMeal}
-                onAddMeal={addMeal}
-                onReset={() => profile && generateInitialPlans(profile)}
-              />
-            )}
-            {activeTab === 'workout' && <WorkoutPlan workouts={workoutPlan} />}
-            {activeTab === 'analytics' && <Analytics cardioData={cardioData} adherenceData={adherenceData} />}
+            {activeTab === 'coach' && <AICoach onPlanUpdate={() => {}} context={{ profile, dietPlan: [], workoutPlan: [] }} />}
+            {activeTab === 'diet' && <DietPlan />}
+            {activeTab === 'workout' && <WorkoutPlan workouts={[]} />}
+            {activeTab === 'analytics' && <Analytics cardioData={[]} adherenceData={[]} />}
             {activeTab === 'admin' && profile?.role === 'admin' && <AdminDashboard />}
           </motion.div>
         </AnimatePresence>

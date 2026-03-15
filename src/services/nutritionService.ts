@@ -80,10 +80,13 @@ export const fetchProductByBarcode = async (barcode: string): Promise<Food | nul
 
 export const searchProducts = async (query: string, page: number = 1): Promise<{ foods: Food[], totalPages: number }> => {
   try {
-    const searchTerms = query ? `&search_terms=${encodeURIComponent(query)}` : '';
+    // Se a query estiver vazia, sugerir alimentos básicos brasileiros
+    const effectiveQuery = query || 'Arroz, Feijão, Ovo, Frango, Banana, Leite';
     const sortBy = query ? 'popularity' : 'unique_scans_n';
+    const searchTerms = `&search_terms=${encodeURIComponent(effectiveQuery)}`;
     
-    const url = `https://world.openfoodfacts.org/api/v2/search?${searchTerms}&page=${page}&page_size=20&fields=code,product_name,brands,image_front_url,nutriscore_grade,nutriments.energy-kcal_100g,nutriments.fat_100g,nutriments.carbohydrates_100g,nutriments.proteins_100g&sort_by=${sortBy}&json=1`;
+    // Adicionado cc=br para priorizar produtos brasileiros e lc=pt para nomes em português
+    const url = `https://world.openfoodfacts.org/api/v2/search?${searchTerms}&page=${page}&page_size=20&cc=br&lc=pt&fields=code,product_name,brands,image_front_url,nutriscore_grade,nutriments.energy-kcal_100g,nutriments.fat_100g,nutriments.carbohydrates_100g,nutriments.proteins_100g,serving_size&sort_by=${sortBy}&json=1`;
 
     const response = await fetch(url, {
       headers: { 'User-Agent': USER_AGENT }
