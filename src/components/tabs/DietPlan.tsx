@@ -375,8 +375,6 @@ const DietPlan: React.FC<DietPlanProps> = ({ meals, onAddFood, onAddMeal, onRese
           </div>
         </div>
       )}
-      </div>
-
       <CatalogModal 
         isOpen={isCatalogOpen} 
         onClose={() => setIsCatalogOpen(false)} 
