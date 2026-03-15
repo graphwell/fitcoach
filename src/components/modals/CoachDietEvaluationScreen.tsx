@@ -40,7 +40,7 @@ const CoachDietEvaluationScreen: React.FC<EvaluationScreenProps> = ({ onClose })
       const data = await generatePersonalizedDiet(formData, { profile: profile!, dietPlan });
       setResult(data);
       setStep(99); // Sucesso
-    } catch (e) {
+    } catch (err) {
       alert("Erro ao gerar dieta. Tente novamente.");
     } finally {
       setLoading(false);

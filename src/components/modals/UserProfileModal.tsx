@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, User, Camera, Save, Scale, Ruler, Calendar, Award } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { X, User, Camera, Save, Scale, Ruler, Calendar } from 'lucide-react';
 import { useStore, UserProfile } from '@/store/useStore';
 
 interface UserProfileModalProps {

@@ -97,7 +97,7 @@ export const useStore = () => {
     } finally {
       setIsHydrated(true);
     }
-  }, [isHydrated]);
+  }, [isHydrated, profile, dietPlan.length, workoutPlan.length, cardioData, adherenceData]);
 
   const signIn = useCallback(async () => {
     await loginWithGoogle();

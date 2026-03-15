@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Meal, Food, useStore } from '@/store/useStore';
 import { Plus, Coffee, Sun, Sunset, Moon, RotateCcw, Trash2, Edit3, MoreVertical, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
