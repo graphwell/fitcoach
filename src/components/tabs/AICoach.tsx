@@ -101,6 +101,7 @@ const AICoach: React.FC<AICoachProps> = ({ onPlanUpdate, context }) => {
     setIsLoading(true);
 
     try {
+      const responseText = await sendMessage(chatInstance.current, messageText);
       const action = parseAction(responseText);
       const options = parseOptions(responseText);
       const displayedText = cleanText(responseText);
@@ -321,7 +322,7 @@ const AICoach: React.FC<AICoachProps> = ({ onPlanUpdate, context }) => {
             disabled={isLoading}
           />
           <button 
-            onClick={handleSend}
+            onClick={() => handleSend()}
             disabled={isLoading || !input.trim()}
             style={{ 
               background: isLoading || !input.trim() ? 'var(--apple-light-gray)' : 'var(--apple-blue)', 
