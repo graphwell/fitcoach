@@ -4,6 +4,8 @@ import { loginWithGoogle, logout as firebaseLogout, subscribeToAuthChanges, sign
 import { saveUserData, loadUserData } from '@/services/userService';
 
 export interface UserProfile {
+  name?: string;
+  photoURL?: string;
   age: number;
   weight: number;
   height: number;
@@ -205,6 +207,29 @@ export const useStore = () => {
     setDietPlan(prev => [...prev, newMeal]);
   }, []);
 
+  const updateMeal = useCallback((mealId: string, name: string) => {
+    setDietPlan(prev => prev.map(m => m.id === mealId ? { ...m, name } : m));
+  }, []);
+
+  const deleteMeal = useCallback((mealId: string) => {
+    setDietPlan(prev => prev.filter(m => m.id !== mealId));
+  }, []);
+
+  const removeFoodFromMeal = useCallback((mealId: string, foodIndex: number) => {
+    setDietPlan(prev => prev.map(meal => {
+      if (meal.id === mealId) {
+        const newFoods = [...meal.foods];
+        newFoods.splice(foodIndex, 1);
+        return { ...meal, foods: newFoods };
+      }
+      return meal;
+    }));
+  }, []);
+
+  const updateProfile = useCallback((updates: Partial<UserProfile>) => {
+    setProfile(prev => prev ? { ...prev, ...updates } : null);
+  }, []);
+
   const applyNewDietPlan = useCallback((meals: Meal[]) => {
     setDietPlan(meals);
     if (user) {
@@ -253,6 +278,10 @@ export const useStore = () => {
     setAdherenceData,
     addFoodToMeal,
     addMeal,
+    updateMeal,
+    deleteMeal,
+    removeFoodFromMeal,
+    updateProfile,
     applyNewDietPlan,
     isHydrated
   };

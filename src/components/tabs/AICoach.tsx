@@ -4,7 +4,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Send, CheckCircle2, Loader2 } from 'lucide-react';
 import { startChat, sendMessage } from '@/services/geminiService';
-import CoachDietEvaluationScreen from '../modals/CoachDietEvaluationScreen';
+import UserProfileModal from '../modals/UserProfileModal';
+import { useStore } from '@/store/useStore';
 
 export interface Message {
   id: string;
@@ -12,7 +13,7 @@ export interface Message {
   sender: 'ai' | 'user';
   timestamp: Date;
   action?: {
-    type: 'update_diet' | 'update_workout';
+    type: 'update_diet' | 'update_workout' | 'apply_full_diet';
     payload: any;
     label: string;
   };
@@ -31,14 +32,15 @@ const AICoach: React.FC<AICoachProps> = ({ onPlanUpdate, context }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: "Olá! Sou seu Coach de IA. Analisei seu perfil e gerei seu plano inicial. Como posso ajudar você hoje?",
+      text: "Vamos definir sua dieta e treino!",
       sender: 'ai',
       timestamp: new Date()
     }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [showEvaluation, setShowEvaluation] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
+  const { profile, user, applyNewDietPlan } = useStore();
   const scrollRef = useRef<HTMLDivElement>(null);
   const chatInstance = useRef<any>(null);
 
@@ -115,7 +117,11 @@ const AICoach: React.FC<AICoachProps> = ({ onPlanUpdate, context }) => {
   const confirmAction = (action: Message['action']) => {
     if (!action) return;
     
-    onPlanUpdate(action.type === 'update_diet' ? 'diet' : 'workout', action.payload);
+    if (action.type === 'apply_full_diet') {
+      applyNewDietPlan(action.payload);
+    } else {
+      onPlanUpdate(action.type === 'update_diet' ? 'diet' : 'workout', action.payload);
+    }
     
     const confirmationMsg: Message = {
       id: Date.now().toString(),
@@ -147,29 +153,32 @@ const AICoach: React.FC<AICoachProps> = ({ onPlanUpdate, context }) => {
         boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <img src="/logo-new.png" alt="FitCoach AI" style={{ height: '36px', objectFit: 'contain', mixBlendMode: 'screen' }} />
           <button 
-            onClick={() => setShowEvaluation(true)}
+            onClick={() => setShowProfile(true)}
             style={{ 
-              background: 'rgba(48, 209, 88, 0.1)', 
-              color: '#30d158', 
+              background: 'none', 
               border: 'none', 
-              padding: '8px 14px', 
-              borderRadius: '20px', 
-              fontSize: '11px', 
-              fontWeight: 800,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px'
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '10px',
+              padding: 0,
+              cursor: 'pointer'
             }}
           >
-             DIETA PERSONALIZADA
+            <div style={{ width: '36px', height: '36px', borderRadius: '12px', background: 'var(--apple-blue)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+              {profile?.photoURL ? <img src={profile.photoURL} alt="Me" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ fontWeight: 800, color: 'white', fontSize: '14px' }}>{profile?.name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase()}</div>}
+            </div>
+            <div style={{ textAlign: 'left' }}>
+              <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--apple-blue)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>PERFIL</div>
+              <div style={{ fontSize: '14px', fontWeight: 800, color: 'white' }}>{profile?.name || 'Vigoroso'}</div>
+            </div>
           </button>
+          <img src="/logo-new.png" alt="FitCoach AI" style={{ height: '32px', objectFit: 'contain', mixBlendMode: 'screen' }} />
         </div>
       </div>
 
-      {showEvaluation && (
-        <CoachDietEvaluationScreen onClose={() => setShowEvaluation(false)} />
+      {showProfile && (
+        <UserProfileModal onClose={() => setShowProfile(false)} />
       )}
 
       <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>

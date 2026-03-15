@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Meal, Food } from '@/store/useStore';
-import { Plus, Coffee, Sun, Sunset, Moon, RotateCcw } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Meal, Food, useStore } from '@/store/useStore';
+import { Plus, Coffee, Sun, Sunset, Moon, RotateCcw, Trash2, Edit3, MoreVertical, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import CatalogModal from '@/components/CatalogModal';
 
 interface DietPlanProps {
@@ -14,10 +14,28 @@ interface DietPlanProps {
 }
 
 const DietPlan: React.FC<DietPlanProps> = ({ meals, onAddFood, onAddMeal, onReset }) => {
+  const { deleteMeal, removeFoodFromMeal, updateMeal } = useStore();
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   const [activeMealId, setActiveMealId] = useState<string | null>(null);
   const [isAddingMeal, setIsAddingMeal] = useState(false);
   const [newMealName, setNewMealName] = useState('');
+  const [editingMeal, setEditingMeal] = useState<{ id: string, name: string } | null>(null);
+  const [longPressedItem, setLongPressedItem] = useState<{ mealId: string, foodIndex?: number } | null>(null);
+  const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+
+  const startLongPress = (mealId: string, foodIndex?: number) => {
+    longPressTimer.current = setTimeout(() => {
+      setLongPressedItem({ mealId, foodIndex });
+      if (window.navigator.vibrate) window.navigator.vibrate(50);
+    }, 600);
+  };
+
+  const endLongPress = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  };
 
   const totalCalories = meals.reduce((sum, meal) => 
     sum + meal.foods.reduce((mSum, food) => mSum + food.calories, 0), 0
@@ -201,7 +219,16 @@ const DietPlan: React.FC<DietPlanProps> = ({ meals, onAddFood, onAddMeal, onRese
           const mealCalories = meal.foods.reduce((sum, f) => sum + f.calories, 0);
 
           return (
-            <div key={meal.id} className="card" style={{ padding: '20px' }}>
+            <div 
+              key={meal.id} 
+              className="card" 
+              style={{ padding: '20px', position: 'relative' }}
+              onMouseDown={() => startLongPress(meal.id)}
+              onMouseUp={endLongPress}
+              onMouseLeave={endLongPress}
+              onTouchStart={() => startLongPress(meal.id)}
+              onTouchEnd={endLongPress}
+            >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--apple-blue)' }}>
@@ -212,24 +239,32 @@ const DietPlan: React.FC<DietPlanProps> = ({ meals, onAddFood, onAddMeal, onRese
                     <div style={{ fontSize: '12px', color: 'var(--apple-tertiary-text)', fontWeight: 600 }}>{mealCalories} kcal estimadas</div>
                   </div>
                 </div>
-                <button 
-                  onClick={() => handleOpenCatalog(meal.id)}
-                  style={{ 
-                    background: 'rgba(255, 255, 255, 0.08)', 
-                    border: 'none', 
-                    color: 'white', 
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s'
-                  }}
-                >
-                  <Plus size={18} />
-                </button>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button 
+                    onClick={() => { setEditingMeal({ id: meal.id, name: meal.name }); }}
+                    style={{ background: 'none', border: 'none', color: 'var(--apple-tertiary-text)', padding: '4px' }}
+                  >
+                    <MoreVertical size={18} />
+                  </button>
+                  <button 
+                    onClick={() => handleOpenCatalog(meal.id)}
+                    style={{ 
+                      background: 'rgba(255, 255, 255, 0.08)', 
+                      border: 'none', 
+                      color: 'white', 
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    <Plus size={18} />
+                  </button>
+                </div>
               </div>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -237,30 +272,109 @@ const DietPlan: React.FC<DietPlanProps> = ({ meals, onAddFood, onAddMeal, onRese
                   <div style={{ fontSize: '13px', color: 'var(--apple-tertiary-text)', fontStyle: 'italic', padding: '8px 0' }}>Nenhum alimento adicionado</div>
                 ) : (
                   meal.foods.map((food, i) => (
-                    <div key={i} style={{ 
-                      display: 'flex', 
-                      justifyContent: 'space-between', 
-                      alignItems: 'center',
-                      padding: '12px',
-                      background: 'rgba(255,255,255,0.03)',
-                      borderRadius: '14px',
-                      border: '1px solid rgba(255,255,255,0.03)'
-                    }}>
+                    <div 
+                      key={i} 
+                      onMouseDown={(e) => { e.stopPropagation(); startLongPress(meal.id, i); }}
+                      onMouseUp={endLongPress}
+                      onMouseLeave={endLongPress}
+                      onTouchStart={(e) => { e.stopPropagation(); startLongPress(meal.id, i); }}
+                      onTouchEnd={endLongPress}
+                      style={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
+                        alignItems: 'center',
+                        padding: '12px',
+                        background: 'rgba(255,255,255,0.03)',
+                        borderRadius: '14px',
+                        border: '1px solid rgba(255,255,255,0.03)',
+                        position: 'relative'
+                      }}
+                    >
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <span style={{ color: 'white', fontWeight: 700, fontSize: '14px' }}>{food.name}</span>
                         <span style={{ color: 'var(--apple-tertiary-text)', fontSize: '12px', fontWeight: 500 }}>{food.amount}</span>
                       </div>
-                      <div style={{ textAlign: 'right' }}>
-                        <div style={{ color: 'var(--apple-blue)', fontWeight: 800, fontSize: '14px' }}>{food.calories} <span style={{ fontSize: '10px', fontWeight: 600, opacity: 0.7 }}>kcal</span></div>
-                        <div style={{ color: 'var(--apple-tertiary-text)', fontSize: '10px', fontWeight: 700, letterSpacing: '0.4px' }}>{food.protein}P {food.carbs}C {food.fat}G</div>
+                      <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div>
+                          <div style={{ color: 'var(--apple-blue)', fontWeight: 800, fontSize: '14px' }}>{food.calories} <span style={{ fontSize: '10px', fontWeight: 600, opacity: 0.7 }}>kcal</span></div>
+                          <div style={{ color: 'var(--apple-tertiary-text)', fontSize: '10px', fontWeight: 700, letterSpacing: '0.4px' }}>{food.protein}P {food.carbs}C {food.fat}G</div>
+                        </div>
+                        {longPressedItem?.mealId === meal.id && longPressedItem?.foodIndex === i && (
+                          <button onClick={() => { removeFoodFromMeal(meal.id, i); setLongPressedItem(null); }} style={{ color: 'var(--apple-red)', background: 'none', border: 'none' }}>
+                            <Trash2 size={16} />
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))
                 )}
               </div>
+
+              <AnimatePresence>
+                {longPressedItem?.mealId === meal.id && longPressedItem?.foodIndex === undefined && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px', borderRadius: '24px', zIndex: 10 }}
+                  >
+                    <button onClick={() => { setEditingMeal({ id: meal.id, name: meal.name }); setLongPressedItem(null); }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', color: 'white', background: 'none', border: 'none' }}>
+                      <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Edit3 size={20} />
+                      </div>
+                      <span style={{ fontSize: '12px', fontWeight: 700 }}>Editar</span>
+                    </button>
+                    <button onClick={() => { deleteMeal(meal.id); setLongPressedItem(null); }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', color: 'var(--apple-red)', background: 'none', border: 'none' }}>
+                      <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(255, 69, 58, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Trash2 size={20} />
+                      </div>
+                      <span style={{ fontSize: '12px', fontWeight: 700 }}>Apagar</span>
+                    </button>
+                    <button onClick={() => setLongPressedItem(null)} style={{ position: 'absolute', top: '12px', right: '12px', color: 'white', background: 'none', border: 'none' }}>
+                      <X size={20} />
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           );
         })}
+      </div>
+
+      <CatalogModal 
+        isOpen={isCatalogOpen} 
+        onClose={() => setIsCatalogOpen(false)} 
+        onSelectProduct={handleProductDetected} 
+      />
+
+      {editingMeal && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 1100, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+          <div className="card" style={{ width: '100%', maxWidth: '350px', padding: '24px' }}>
+            <h3 style={{ margin: '0 0 20px 0' }}>Editar Refeição</h3>
+            <input 
+              type="text" 
+              value={editingMeal.name} 
+              onChange={e => setEditingMeal({...editingMeal, name: e.target.value})}
+              style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '14px', color: 'white', marginBottom: '20px' }}
+            />
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button 
+                onClick={() => { updateMeal(editingMeal.id, editingMeal.name); setEditingMeal(null); }}
+                className="btn-primary" 
+                style={{ flex: 1, padding: '12px' }}
+              >
+                Salvar
+              </button>
+              <button 
+                onClick={() => setEditingMeal(null)}
+                style={{ flex: 1, background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '12px', color: 'white' }}
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       </div>
 
       <CatalogModal 
