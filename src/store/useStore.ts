@@ -237,6 +237,13 @@ export const useStore = () => {
     }
   }, [user]);
 
+  const applyNewWorkoutPlan = useCallback((workouts: Workout[]) => {
+    setWorkoutPlan(workouts);
+    if (user) {
+      saveUserData(user.uid, { workoutPlan: workouts });
+    }
+  }, [user]);
+
   // Sync to LocalStorage AND Firestore
   useEffect(() => {
     if (!isHydrated) return;
@@ -283,6 +290,7 @@ export const useStore = () => {
     removeFoodFromMeal,
     updateProfile,
     applyNewDietPlan,
+    applyNewWorkoutPlan,
     isHydrated
   };
 };

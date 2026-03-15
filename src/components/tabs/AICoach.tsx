@@ -12,8 +12,9 @@ export interface Message {
   text: string;
   sender: 'ai' | 'user';
   timestamp: Date;
+  options?: string[];
   action?: {
-    type: 'update_diet' | 'update_workout' | 'apply_full_diet';
+    type: 'update_diet' | 'update_workout' | 'apply_full_diet' | 'apply_full_workout';
     payload: any;
     label: string;
   };
@@ -40,7 +41,7 @@ const AICoach: React.FC<AICoachProps> = ({ onPlanUpdate, context }) => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
-  const { profile, user, applyNewDietPlan } = useStore();
+  const { profile, user, applyNewDietPlan, applyNewWorkoutPlan } = useStore();
   const scrollRef = useRef<HTMLDivElement>(null);
   const chatInstance = useRef<any>(null);
 
@@ -68,16 +69,29 @@ const AICoach: React.FC<AICoachProps> = ({ onPlanUpdate, context }) => {
     return null;
   };
 
-  const cleanText = (text: string) => {
-    return text.replace(/\[\[ACTION:.*?\]\]/g, '').trim();
+  const parseOptions = (text: string) => {
+    const optionsMatch = text.match(/\[\[OPTIONS:(.*?)\]\]/);
+    if (optionsMatch && optionsMatch[1]) {
+      try {
+        return JSON.parse(optionsMatch[1]);
+      } catch (e) {
+        console.error("Erro ao parsear opções", e);
+      }
+    }
+    return null;
   };
 
-  const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+  const cleanText = (text: string) => {
+    return text.replace(/\[\[ACTION:.*?\]\]/g, '').replace(/\[\[OPTIONS:.*?\]\]/g, '').trim();
+  };
+
+  const handleSend = async (overrideInput?: string) => {
+    const messageText = overrideInput || input;
+    if (!messageText.trim() || isLoading) return;
 
     const userMsg: Message = {
       id: Date.now().toString(),
-      text: input,
+      text: messageText,
       sender: 'user',
       timestamp: new Date()
     };
@@ -87,8 +101,8 @@ const AICoach: React.FC<AICoachProps> = ({ onPlanUpdate, context }) => {
     setIsLoading(true);
 
     try {
-      const responseText = await sendMessage(chatInstance.current, input);
       const action = parseAction(responseText);
+      const options = parseOptions(responseText);
       const displayedText = cleanText(responseText);
 
       const aiMsg: Message = {
@@ -96,7 +110,8 @@ const AICoach: React.FC<AICoachProps> = ({ onPlanUpdate, context }) => {
         text: displayedText,
         sender: 'ai',
         timestamp: new Date(),
-        action: action || undefined
+        action: action || undefined,
+        options: options || undefined
       };
 
       setMessages(prev => [...prev, aiMsg]);
@@ -119,13 +134,15 @@ const AICoach: React.FC<AICoachProps> = ({ onPlanUpdate, context }) => {
     
     if (action.type === 'apply_full_diet') {
       applyNewDietPlan(action.payload);
+    } else if (action.type === 'apply_full_workout') {
+      applyNewWorkoutPlan(action.payload);
     } else {
       onPlanUpdate(action.type === 'update_diet' ? 'diet' : 'workout', action.payload);
     }
     
     const confirmationMsg: Message = {
       id: Date.now().toString(),
-      text: `Entendido! Acabei de aplicar essa alteração no seu plano de ${action.type === 'update_diet' ? 'dieta' : 'treino'}.`,
+      text: `Entendido! Acabei de aplicar essa alteração no seu plano de ${action.type.includes('diet') ? 'dieta' : 'treino'}.`,
       sender: 'ai',
       timestamp: new Date()
     };
@@ -201,6 +218,38 @@ const AICoach: React.FC<AICoachProps> = ({ onPlanUpdate, context }) => {
               {msg.text}
             </div>
             
+            {msg.options && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
+                {msg.options.map((opt, i) => (
+                  <button 
+                    key={i}
+                    onClick={() => handleSend(opt)}
+                    style={{ 
+                      background: 'rgba(255,255,255,0.06)', 
+                      border: '1px solid rgba(255,255,255,0.1)', 
+                      color: 'white', 
+                      padding: '8px 16px', 
+                      borderRadius: '16px', 
+                      fontSize: '13px', 
+                      fontWeight: 700,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {opt}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {msg.text === "Vamos definir sua dieta e treino!" && messages.length === 1 && (
+              <button 
+                onClick={() => handleSend("Quero iniciar minha avaliação")}
+                style={{ marginTop: '16px', display: 'block', width: '100%', padding: '14px', background: 'var(--apple-blue)', color: 'white', borderRadius: '16px', border: 'none', fontWeight: 800, fontSize: '15px', cursor: 'pointer' }}
+              >
+                🚀 INICIAR MEU PROTOCOLO
+              </button>
+            )}
+
             {msg.action && (
               <motion.div 
                 initial={{ opacity: 0, y: 10 }}
