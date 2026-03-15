@@ -6,12 +6,6 @@ import { Plus, Coffee, Sun, Sunset, Moon, RotateCcw, Trash2, Edit3, MoreVertical
 import { motion, AnimatePresence } from 'framer-motion';
 import CatalogModal from '@/components/CatalogModal';
 
-interface DietPlanProps {
-  meals: Meal[];
-  onAddFood: (mealId: string, food: Food) => void;
-  onAddMeal: (name: string) => void;
-  onReset: () => void;
-}
 
 const DietPlan: React.FC = () => {
   const { 

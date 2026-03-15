@@ -44,12 +44,6 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
   const [adherenceData, setAdherenceData] = useState<number[]>([100, 100, 100, 100, 100, 100, 100]);
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // Sync to Cloud if authenticated
-  const syncToCloud = useCallback((data: any) => {
-    if (user) {
-      saveUserData(user.uid, data);
-    }
-  }, [user]);
 
   // Auth Listener
   useEffect(() => {
@@ -104,9 +98,9 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [profile, dietPlan, workoutPlan, cardioData, adherenceData, isHydrated, user]);
 
-  const signIn = async () => await loginWithGoogle();
-  const loginEmail = async (email: string, pass: string) => await signInWithEmail(email, pass);
-  const signupEmail = async (email: string, pass: string) => await signUpWithEmail(email, pass);
+  const signIn = async () => { await loginWithGoogle(); };
+  const loginEmail = async (email: string, pass: string) => { await signInWithEmail(email, pass); };
+  const signupEmail = async (email: string, pass: string) => { await signUpWithEmail(email, pass); };
   const signOut = async () => {
     await firebaseLogout();
     setProfile(null);
@@ -116,9 +110,6 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const generateInitialPlans = (prof: UserProfile) => {
-    const isGaining = prof.goal === 'gain_muscle';
-    const baseCalories = prof.gender === 'male' ? 2500 : 1900;
-    const targetCalories = isGaining ? baseCalories + 300 : baseCalories - 300;
     
     const initialDiet: Meal[] = [
       { id: '1', name: 'Café da Manhã', foods: [

@@ -10,7 +10,7 @@ import {
   ShieldAlert
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useStore, Meal, Food, Workout, Exercise } from '@/store/useStore';
+import { useStore } from '@/store/useStore';
 import Onboarding from '@/components/Onboarding';
 import AuthScreen from '@/components/AuthScreen';
 import AdminDashboard from '@/components/AdminDashboard';
