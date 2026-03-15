@@ -50,21 +50,14 @@ const AuthScreen: React.FC = () => {
         style={{ maxWidth: '380px', width: '100%', zIndex: 1 }}
       >
         <div style={{ marginBottom: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div style={{
-            width: '120px',
-            height: '120px',
-            borderRadius: '30px',
-            background: 'rgba(255,255,255,0.03)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: '24px',
-            border: '1px solid rgba(255,255,255,0.05)',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(10, 132, 255, 0.1)'
-          }}>
-            <img src="/logo-new.png" alt="FitCoach AI" style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
-          </div>
-          <h1 style={{ fontSize: '32px', fontWeight: 800, marginBottom: '8px', letterSpacing: '-1px' }}>
+          <img src="/logo-new.png" alt="FitCoach AI" style={{ 
+            width: '120px', 
+            height: '120px', 
+            objectFit: 'contain', 
+            mixBlendMode: 'screen',
+            filter: 'drop-shadow(0 0 15px rgba(10, 132, 255, 0.4))'
+          }} />
+          <h1 style={{ fontSize: '32px', fontWeight: 800, marginTop: '16px', marginBottom: '8px', letterSpacing: '-1px' }}>
             {isLogin ? 'Bem-vindo de volta' : 'Crie sua conta'}
           </h1>
           <p style={{ color: 'var(--apple-gray)', fontSize: '15px' }}>
